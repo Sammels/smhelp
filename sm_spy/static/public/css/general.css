@@ -1,0 +1,17 @@
+html, body, img {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+.content {
+    min-height: 500px;
+}
+
+.me-content {
+    margin: 50px auto;
+    width:800px;
+}

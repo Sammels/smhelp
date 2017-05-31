@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "outDir": "./public/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es6",
+        "jsx": "react"
+    },
+    "include": [
+       //  "./src/**/*",
+        "sm_spy/custom_typings/**/*"
+    ],
+    "files": [
+        "./node_modules/react/dist/react.min.js",
+        "./node_modules/react-dom/dist/react-dom.min.js"
+    ]
+}
