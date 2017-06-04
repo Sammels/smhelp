@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"fmt"
 	"sync"
+	"database/sql"
+  	_"github.com/lib/pq"
 )
 
 func main() {
@@ -19,6 +21,33 @@ func main() {
 	var wg sync.WaitGroup
 	page := 1
 	proxies := get_proxy_list(page)
+
+	var names []string
+	db, err := sql.Open("postgres","user=docker password=docker dbname=sm_spy sslmode=disable")
+	if err != nil {
+	  log.Fatal("Error: The data source arguments are not valid")
+	}
+	if err != nil {
+	  log.Fatal("Error: Could not establish a connection with the database")
+	}
+
+	err = db.Ping()
+	if err != nil {
+	  log.Fatal("Error: Could not establish a connection with the database")
+	}
+
+	rows, err := db.Query("SELECT id FROM twitch_proxies")
+	if err != nil {
+	  log.Fatal(err)
+	}
+	for rows.Next() {
+	  var name string
+	  if err := rows.Scan(&name); err != nil {
+	    log.Fatal(err)
+	  }
+	  names = append(names, name)
+	}
+	log.Print(names, 1)
 
 	for _, proxy := range proxies {
 		proxies_store = append(proxies_store, proxy)
