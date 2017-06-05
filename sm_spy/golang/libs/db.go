@@ -6,25 +6,14 @@ import (
 	"log"
 )
 
-func init() {
-	db, err := sql.Open("postgres","user=docker password=docker dbname=sm_spy sslmode=disable")
-	if err != nil {
-	  log.Fatal("Error: The data source arguments are not valid")
-	}
-	if err != nil {
-	  log.Fatal("Error: Could not establish a connection with the database")
-	}
 
-	err = db.Ping()
-	if err != nil {
-	  log.Fatal("Error: Could not establish a connection with the database")
-	}
+type DB struct {
+	conn sql.DB
 }
 
-func query(sql_query string) {
-
+func (db *DB) find(sql_query string) []string {
 	var names []string
-	rows, err := db.Query(sql_query)
+	rows, err := db.conn.Query(sql_query)
 	if err != nil {
 	  log.Fatal(err)
 	}
@@ -35,5 +24,23 @@ func query(sql_query string) {
 	  }
 	  names = append(names, name)
 	}
-	log.Print(names, 1)
+	log.Print(names, 1);
+	return names
+}
+
+func init() {
+	db, err := sql.Open("postgres","user=docker password=docker dbname=sm_spy sslmode=disable")
+	if err != nil {
+	  log.Fatal("Error: The data source arguments are not valid")
+	}
+	if err != nil {
+	  log.Fatal("Error: Could not establish a connection with the database")
+	}
+	db_struct := DB{*db}
+
+
+	err = db_struct.conn.Ping()
+	if err != nil {
+	  log.Fatal("Error: Could not establish a connection with the database")
+	}
 }

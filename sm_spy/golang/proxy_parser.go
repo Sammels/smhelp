@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"fmt"
 	"sync"
-	"./libs"
 )
 
 func main() {
