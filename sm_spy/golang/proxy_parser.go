@@ -12,34 +12,37 @@ import (
 	"net/url"
 	"fmt"
 	"sync"
+	"./postgres"
 )
 
 func main() {
-	proxies_store := []string{}
-	var wg sync.WaitGroup
-	page := 1
-	proxies := get_proxy_list(page)
+	//proxies_store := []string{}
+	//var wg sync.WaitGroup
+	//page := 1
+	//proxies := get_proxy_list(page)
 
+	pg_conn := postgres.Init()
+	data := pg_conn.Find("SELECT * FROM auth_user")
+	log.Print(data)
 
-
-	for _, proxy := range proxies {
-		proxies_store = append(proxies_store, proxy)
-	}
-	for len(proxies) > 0 {
-		page++
-		proxies := get_proxy_list(page)
-		if len(proxies) <= 0 {
-			break
-		}
-		for _, proxy := range proxies {
-			proxies_store = append(proxies_store, proxy)
-		}
-	}
-	wg.Add(len(proxies_store))
-	for _, proxy := range proxies_store {
-		go proxy_checker(proxy, &wg)
-	}
-	wg.Wait()
+	//for _, proxy := range proxies {
+	//	proxies_store = append(proxies_store, proxy)
+	//}
+	//for len(proxies) > 0 {
+	//	page++
+	//	proxies := get_proxy_list(page)
+	//	if len(proxies) <= 0 {
+	//		break
+	//	}
+	//	for _, proxy := range proxies {
+	//		proxies_store = append(proxies_store, proxy)
+	//	}
+	//}
+	//wg.Add(len(proxies_store))
+	//for _, proxy := range proxies_store {
+	//	go proxy_checker(proxy, &wg)
+	//}
+	//wg.Wait()
 }
 
 func proxy_checker(proxy string, wg *sync.WaitGroup) {
