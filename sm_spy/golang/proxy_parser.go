@@ -23,7 +23,9 @@ func main() {
 
 	pg_conn := postgres.Init()
 	data := pg_conn.Find("SELECT * FROM auth_user")
-	log.Print(data)
+	for _, d := range data {
+		log.Print(d["username"])
+	}
 
 	//for _, proxy := range proxies {
 	//	proxies_store = append(proxies_store, proxy)

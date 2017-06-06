@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	_"github.com/lib/pq"
 	"log"
-	"reflect"
 )
 
 
@@ -12,7 +11,7 @@ type DB struct {
 	conn sql.DB
 }
 
-func (db *DB) Find(sql_query string) []string {
+func (db *DB) Find(sql_query string) []map[string]interface{} {
 
 	rows, err := db.conn.Query(sql_query)
 	if err != nil {
@@ -23,8 +22,7 @@ func (db *DB) Find(sql_query string) []string {
         count := len(columns)
         values := make([]interface{}, count)
         valuePtrs := make([]interface{}, count)
-	return_slice := make([]map[string]interface{}, count)
-
+	return_slice := make([]map[string]interface{}, 0)
 	for rows.Next() {
 		return_columns := make(map[string]interface{} )
 		for i, _ := range columns {
@@ -40,7 +38,6 @@ func (db *DB) Find(sql_query string) []string {
 			} else {
 				v = val
 			}
-			log.Println(col, v, reflect.TypeOf(v))
 			return_columns[col] = v
 		}
 		return_slice = append(return_slice, return_columns)
