@@ -11,13 +11,30 @@ type DB struct {
 	conn sql.DB
 }
 
-func (db *DB) Find(sql_query string) []map[string]interface{} {
-
-	rows, err := db.conn.Query(sql_query)
+func (db *DB) Insert(sql_query string, args ...interface{}) int {
+	lastInsertId := 0
+	err := db.conn.QueryRow("INSERT INTO brands (name) VALUES($1) RETURNING id", args...).Scan(&lastInsertId)
 	if err != nil {
 	  log.Fatal(err)
 	}
+	return lastInsertId
+}
 
+func (db *DB) Execute(sql_query string, args ...interface{}) bool {
+	_, err := db.conn.Exec(sql_query, args...)
+	if err != nil {
+	  log.Fatal(err)
+	}
+	return true
+}
+
+func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface{} {
+
+	rows, err := db.conn.Query(sql_query, args...)
+	if err != nil {
+	  log.Fatal(err)
+	}
+	defer rows.Close()
 	columns, _ := rows.Columns()
         count := len(columns)
         values := make([]interface{}, count)
@@ -58,6 +75,10 @@ func (db *DB) init() {
 	if err != nil {
 	  log.Fatal("Error: Could not establish a connection with the database")
 	}
+}
+
+func (db *DB) Close() {
+	db.conn.Close()
 }
 
 func Init() DB {

@@ -16,35 +16,28 @@ import (
 )
 
 func main() {
-	//proxies_store := []string{}
-	//var wg sync.WaitGroup
-	//page := 1
-	//proxies := get_proxy_list(page)
-
-	pg_conn := postgres.Init()
-	data := pg_conn.Find("SELECT * FROM auth_user")
-	for _, d := range data {
-		log.Print(d["username"])
+	proxies_store := []string{}
+	var wg sync.WaitGroup
+	page := 1
+	proxies := get_proxy_list(page)
+	for _, proxy := range proxies {
+		proxies_store = append(proxies_store, proxy)
 	}
-
-	//for _, proxy := range proxies {
-	//	proxies_store = append(proxies_store, proxy)
-	//}
-	//for len(proxies) > 0 {
-	//	page++
-	//	proxies := get_proxy_list(page)
-	//	if len(proxies) <= 0 {
-	//		break
-	//	}
-	//	for _, proxy := range proxies {
-	//		proxies_store = append(proxies_store, proxy)
-	//	}
-	//}
-	//wg.Add(len(proxies_store))
-	//for _, proxy := range proxies_store {
-	//	go proxy_checker(proxy, &wg)
-	//}
-	//wg.Wait()
+	for len(proxies) > 0 {
+		page++
+		proxies := get_proxy_list(page)
+		if len(proxies) <= 0 {
+			break
+		}
+		for _, proxy := range proxies {
+			proxies_store = append(proxies_store, proxy)
+		}
+	}
+	wg.Add(len(proxies_store))
+	for _, proxy := range proxies_store {
+		go proxy_checker(proxy, &wg)
+	}
+	wg.Wait()
 }
 
 func proxy_checker(proxy string, wg *sync.WaitGroup) {
@@ -59,7 +52,13 @@ func proxy_checker(proxy string, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Println("Error", err)
 	} else {
+		pg_conn := postgres.Init()
 		log.Println(proxy, ' ', resp.StatusCode, http.ProxyURL(proxyUrl))
+		proxy_slice := strings.Split(proxy, ":")
+		pg_conn.Execute("INSERT INTO twitch_proxies (ip, port, proxy_status) VALUES ($1, $2, $3)",
+			proxy_slice[0], proxy_slice[1], 1)
+		pg_conn.Close()
+
 	}
 	return
 }
