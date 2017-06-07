@@ -15,7 +15,13 @@ import (
 	"./postgres"
 )
 
+type gorutineCounter struct {
+	counter int
+}
+var maxGorutines = 80
+
 func main() {
+	curretnGorutines := gorutineCounter{}
 	proxies_store := []string{}
 	var wg sync.WaitGroup
 	page := 1
@@ -35,13 +41,27 @@ func main() {
 	}
 	wg.Add(len(proxies_store))
 	for _, proxy := range proxies_store {
-		go proxy_checker(proxy, &wg)
+		go proxy_checker(proxy, &wg, &curretnGorutines)
 	}
 	wg.Wait()
 }
 
-func proxy_checker(proxy string, wg *sync.WaitGroup) {
+func proxy_checker(proxy string, wg *sync.WaitGroup, curretnGorutines *gorutineCounter) {
 	defer wg.Done()
+	for (curretnGorutines.counter >= maxGorutines) {
+		time.Sleep(1)
+	}
+	curretnGorutines.counter++
+	pg_conn := postgres.Init()
+
+	defer pg_conn.Close()
+	proxy_slice := strings.Split(proxy, ":")
+	is_proxy := pg_conn.Find("SELECT id FROM twitch_proxies WHERE ip = $1 AND port = $2",
+		proxy_slice[0], proxy_slice[1])
+	if len(is_proxy) > 0 {
+		log.Println(is_proxy, "is exist")
+		return
+	}
 	proxyUrl, _ := url.Parse(fmt.Sprint("http://", proxy))
 	log.Print("Checking ", proxy)
 	tr := &http.Transport{
@@ -52,14 +72,11 @@ func proxy_checker(proxy string, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Println("Error", err)
 	} else {
-		pg_conn := postgres.Init()
 		log.Println(proxy, ' ', resp.StatusCode, http.ProxyURL(proxyUrl))
-		proxy_slice := strings.Split(proxy, ":")
 		pg_conn.Execute("INSERT INTO twitch_proxies (ip, port, proxy_status) VALUES ($1, $2, $3)",
 			proxy_slice[0], proxy_slice[1], 1)
-		pg_conn.Close()
-
 	}
+	curretnGorutines.counter--
 	return
 }
 

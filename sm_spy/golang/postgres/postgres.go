@@ -67,14 +67,7 @@ func (db *DB) init() {
 	if err != nil {
 	  log.Fatal("Error: The data source arguments are not valid")
 	}
-	if err != nil {
-	  log.Fatal("Error: Could not establish a connection with the database")
-	}
 	db.conn = *connector
-	err = db.conn.Ping()
-	if err != nil {
-	  log.Fatal("Error: Could not establish a connection with the database")
-	}
 }
 
 func (db *DB) Close() {
