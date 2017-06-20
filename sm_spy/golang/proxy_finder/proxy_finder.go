@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"regexp"
 	"encoding/base64"
+	"github.com/PuerkitoBio/goquery"
+	"bytes"
 )
 
 
@@ -42,5 +44,27 @@ func GetProxyList(page int) ([]string) {
 			log.Println("Not found")
 		}
 	}
+	return proxy_store
+}
+
+func GetFreeProxyList() ([]string) {
+	proxy_store := []string{}
+	doc, err := goquery.NewDocument("https://free-proxy-list.net")
+	if err != nil {
+		log.Fatal(err)
+	}
+	doc.Find("table#proxylisttable tr").Each(func(i int, s *goquery.Selection) {
+		re_td, _ := regexp.Compile(`<td>([^<]+)<\/td>`)
+		tr_content, _ := s.Html()
+		tr_slice := re_td.FindAllStringSubmatch(tr_content, -1)
+		if len(tr_slice) > 0 {
+			var buffer bytes.Buffer
+			buffer.WriteString(tr_slice[0][1])
+			buffer.WriteString(":")
+			buffer.WriteString(tr_slice[1][1])
+			proxy_store = append(proxy_store, buffer.String())
+		}
+
+	})
 	return proxy_store
 }

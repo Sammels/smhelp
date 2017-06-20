@@ -32,6 +32,9 @@ func main() {
 			proxies_store = append(proxies_store, proxy)
 		}
 	}
+	for _, proxy := range proxy_finder.GetFreeProxyList() {
+		proxies_store = append(proxies_store, proxy)
+	}
 	proxies_store = get_proxies_from_db(proxies_store)
 	wg.Add(len(proxies_store))
 	for _, proxy := range proxies_store {
