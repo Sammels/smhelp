@@ -5,7 +5,6 @@ import (
 	"../libs/postgres"
 	"strings"
 	"encoding/json"
-	"log"
 	"strconv"
 )
 
