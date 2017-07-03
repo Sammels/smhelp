@@ -45,7 +45,8 @@ THIRD_PARTY_INSTALLED_APPS = [
 
 CUSTOM_INSTALLED_APPS = [
     'core',
-    'twitch'
+    'twitch',
+    'vk'
 ]
 
 INSTALLED_APPS = DJANGO_INSTALLED_APPS + THIRD_PARTY_INSTALLED_APPS + CUSTOM_INSTALLED_APPS
@@ -78,6 +79,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+            ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader'
             ],
         },
     },
