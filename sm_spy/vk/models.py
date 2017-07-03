@@ -14,6 +14,7 @@ class City(models.Model):
 class WatchingGroups(models.Model):
     name = models.CharField(max_length=255)
     dt_create = models.DateTimeField(auto_now_add=True, blank=True)
+    dt_last_update = models.DateField(null=True, default=None)
 
 
 class PersonGroup(models.Model):
