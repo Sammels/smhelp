@@ -3,9 +3,9 @@ package main
 import (
 	"strconv"
 	"sync"
-	"./postgres"
-	"./proxy_checker"
-	"./proxy_finder"
+	"../libs/postgres"
+	"../libs/proxy_checker"
+	"../libs/proxy_finder"
 	"bytes"
 )
 
