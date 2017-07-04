@@ -1,5 +1,7 @@
 package main
 
+import "C"
+
 import (
 	"strconv"
 	"sync"
@@ -12,8 +14,8 @@ import (
 
 var maxGorutines = 80
 
-
-func main() {
+//export Parse
+func Parse() {
 	curretnGorutines := proxy_checker.GorutineCounter{}
 	proxies_store := []string{}
 	var wg sync.WaitGroup
@@ -43,7 +45,6 @@ func main() {
 	wg.Wait()
 }
 
-
 func get_proxies_from_db(proxies_store []string) []string {
 	pg_conn := postgres.Init()
 	proxies := pg_conn.Find("SELECT ip, port FROM twitch_proxies")
@@ -56,6 +57,8 @@ func get_proxies_from_db(proxies_store []string) []string {
 	}
 	return proxies_store
 }
+
+func main() {}
 
 
 

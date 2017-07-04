@@ -1,5 +1,7 @@
 package main
 
+import "C"
+
 import (
 	"github.com/yanple/vk_api"
 	"../libs/postgres"
@@ -18,7 +20,8 @@ type vkResponse struct {
 	Response vkRresponseContent
 }
 
-func main() {
+//export StartChecker
+func StartChecker() {
 	pg_conn := postgres.Init()
 	var api = &vk_api.Api{}
 	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
@@ -64,3 +67,5 @@ func insertUsers(respose string, row []string, pg_conn *postgres.DB)  {
 	}
 	pg_conn.Execute("UPDATE vk_watchinggroups SET dt_last_update=NOW() WHERE id = $1", group_id)
 }
+
+func main() {}

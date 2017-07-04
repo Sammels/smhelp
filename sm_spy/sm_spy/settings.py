@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+import djcelery
+from celery.schedules import crontab
+
+
+djcelery.setup_loader()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,7 +45,8 @@ DJANGO_INSTALLED_APPS = [
 ]
 
 THIRD_PARTY_INSTALLED_APPS = [
-    'social_django'
+    'social_django',
+    'djcelery'
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -177,3 +183,63 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
     'social_core.pipeline.social_auth.associate_by_email',
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'celery': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/celery.log',
+            'formatter': 'simple',
+            'maxBytes': 1024 * 1024 * 100,  # 100 mb
+        },
+    }
+}
+
+# cache settings
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': [
+            'localhost:6379',
+        ],
+        'KEY_PREFIX': 'SM_CHACHE_'
+    }
+}
+
+# Celery configuration:
+
+BROKER_URL = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ['json', 'pickle']
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = 'json'
+CELERYBEAT_SCHEDULE = {
+    'vk_checker': {
+        'task': 'vk.celery.vk_checker',
+        'schedule': crontab(minute=0, hour=23),
+    },
+    'proxy_parser': {
+        'task': 'twitch.celery.proxy_parser',
+        'schedule': crontab(minute='*/10'),
+    }
+}
+CELERY_TIMEZONE = 'UTC'
+CELERY_RESULT_BACKEND = BROKER_URL
+TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
