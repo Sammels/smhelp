@@ -1,5 +1,5 @@
 import os
-from ctypes import *
+import subprocess
 import logging
 
 from django.conf import settings
@@ -12,5 +12,4 @@ logger = logging.getLogger(__name__)
 @shared_task()
 def vk_checker():
     logger.info("vk_checker is stated")
-    vk_checker = cdll.LoadLibrary(os.path.join(settings.BASE_DIR, 'bin', 'vk_group_checker.so'))
-    vk_checker.StartChecker()
+    subprocess.run(os.path.join(settings.BASE_DIR, 'bin', 'vk_group_checker.so'))

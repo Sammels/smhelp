@@ -1,5 +1,5 @@
 import os
-from ctypes import *
+import subprocess
 import logging
 
 from django.conf import settings
@@ -12,5 +12,4 @@ logger = logging.getLogger(__name__)
 @shared_task()
 def proxy_parser():
     logger.info("proxy_parser is stated")
-    proxy_parser = cdll.LoadLibrary(os.path.join(settings.BASE_DIR, 'bin', 'proxy_parser.so'))
-    proxy_parser.Parse()
+    subprocess.run(os.path.join(settings.BASE_DIR, 'bin', 'proxy_parser.so'))

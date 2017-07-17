@@ -1,7 +1,7 @@
 Commands for building Go library:
 
-    go build -o ./bin/proxy_parser.so -buildmode=c-shared ./golang/proxy_parser/main.go
-    go build -o ./bin/vk_group_checker.so -buildmode=c-shared ./golang/vk_group_checker/main.go
+    go build -o ./bin/proxy_parser.so  ./golang/proxy_parser/main.go
+    go build -o ./bin/vk_group_checker.so ./golang/vk_group_checker/main.go
 
 For running celery listener:
 

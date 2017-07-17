@@ -14,8 +14,7 @@ import (
 
 var maxGorutines = 80
 
-//export Parse
-func Parse() {
+func main() {
 	curretnGorutines := proxy_checker.GorutineCounter{}
 	proxies_store := []string{}
 	var wg sync.WaitGroup
@@ -57,8 +56,6 @@ func get_proxies_from_db(proxies_store []string) []string {
 	}
 	return proxies_store
 }
-
-func main() {}
 
 
 
