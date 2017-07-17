@@ -1,5 +1,6 @@
 interface Window {
-    authVK: any; 
+    authVK: any;
+    userInfo: object;
 }
 
 declare var React: any;

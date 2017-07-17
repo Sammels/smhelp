@@ -2,10 +2,11 @@ import * as React from "react";
 
 var styles = require('./footer.css');
 
-interface IFooter {}
+interface IFooterProps {}
 
 
-const FooterClass = class Footer extends React.Component<IFooter, void> {
+const FooterClass = class Footer extends React.Component<IFooterProps, any> {
+
     render () {
         return <div className='footer'>
         </div>;

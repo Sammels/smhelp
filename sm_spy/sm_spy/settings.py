@@ -155,8 +155,6 @@ STATICFILES_DIRS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.vk.VKOAuth2',
-    'social_core.backends.vk.VKontakteOpenAPI',
     'django.contrib.auth.backends.ModelBackend',
 )
 SOCIAL_AUTH_URL_NAMESPACE = 'social'

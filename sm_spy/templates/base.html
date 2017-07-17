@@ -48,6 +48,14 @@
     </script>
     <div id="app"></div>
 </body>
+<script id="user-info">
+    window['userInfo'] = null;
+    {% if request.user.id %}
+    window['userInfo'] = {
+        "id": {{ request.user.id }}
+    }
+    {% endif %}
+</script>
 <script src="{% static 'js/axios.min.js' %}"></script>
 <script src="{% static 'js/bundle.js' %}"></script>
 <script src="{% static 'js/global.js' %}"></script>

@@ -4,7 +4,7 @@ const initialState = {}
 
 
 const userReducer = (state = initialState, action: any) => {
-    var result: any = Object.assign({}, state);
+    var result: any = state || {};
     switch (action.type) {
         case constants.USER_INFO_SUCCESS:
             result['dd'] = 'dd';
