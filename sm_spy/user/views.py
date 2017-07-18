@@ -6,11 +6,8 @@ import string
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, models
 
-def get_info(request):
-    print('u', request.user)
-    return render(request, 'base.html')
 
 def vk_auth(request):
     m = hashlib.md5()

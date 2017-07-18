@@ -46,7 +46,8 @@ DJANGO_INSTALLED_APPS = [
 
 THIRD_PARTY_INSTALLED_APPS = [
     'social_django',
-    'djcelery'
+    'djcelery',
+    'rest_framework',
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -241,3 +242,9 @@ CELERYBEAT_SCHEDULE = {
 CELERY_TIMEZONE = 'UTC'
 CELERY_RESULT_BACKEND = BROKER_URL
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}

@@ -1,10 +1,14 @@
 ///<reference path="../../../../node_modules/@types/react-redux/index.d.ts"/>
 import * as React from "react";
 import { connect } from 'react-redux';
-import { Route } from 'react-router';
+import {
+  HashRouter as Router,
+  Route
+} from 'react-router-dom'
 import { returntypeof } from 'react-redux-typescript';
 
 import Main from "./Main";
+import Account from "./Account";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -49,9 +53,12 @@ class Wrapper extends React.Component<WrapperRedux, IWrapperClassState>  {
         return (
             <div className="main" >
                 <Header />
-                <div className="content">
-                    <Route exact path='/' component={Main} />
-                </div>
+                <Router>
+                    <div className="content">
+                        <Route exact path='/' component={Main} />
+                        <Route path='/account' component={Account} />
+                    </div>
+                </Router>
                 <Footer />
             </div>
         )

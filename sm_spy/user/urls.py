@@ -1,8 +1,10 @@
 from django.conf.urls import url
 
-from user.views import get_info, vk_auth
+from user.views import vk_auth
+from user.api import GetInfo
+
 
 urlpatterns = [
-    url(r'getinfo/$', get_info, name="get_info"),
+    url(r'get_info/$', GetInfo.as_view(), name="get_info"),
     url(r'vk_auth/$', vk_auth, name="vk_auth"),
 ]

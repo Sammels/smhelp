@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Link } from 'react-router-dom'
 
 var styles = require('./header.scss');
 
@@ -12,10 +11,14 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
         window['authVK']();
     }
 
+    logout() {
+        return false;
+    }
+
     showUserMenu () {
         return (<div>
-            <a href="javascript:void(0);" onClick={ () => this.login() } className="login-link">Выход</a>
-            <a href="javascript:void(0);" onClick={ () => this.login() } className="login-link">Кабинет</a>
+            <a href="javascript:void(0);" onClick={ () => this.logout() } className="login-link">Выход</a>
+            <a href="#/account" className="login-link">Кабинет</a>
         </div>)
     }
 
@@ -33,7 +36,7 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
                     <div className='header-bottom'>
                         <div className="header-logo">
                             <img src="/static/img/logo.png" className="logo"/>
-                            <span>vk-шпион</span>
+                            <span>vk-помощник</span>
                         </div>
                         <nav>
                             <ul>
