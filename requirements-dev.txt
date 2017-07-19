@@ -1,0 +1,8 @@
+django==1.11
+social-auth-app-django==1.2.0
+psycopg2==2.7.1
+django-celery==3.2.1
+redis==2.10.5
+django-redis-cache==1.7.1
+djangorestframework==3.6.3
+django-debug-toolbar==1.8

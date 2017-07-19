@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	_"github.com/lib/pq"
 	"log"
+	"bytes"
 )
 
 
@@ -12,8 +13,11 @@ type DB struct {
 }
 
 func (db *DB) Insert(sql_query string, args ...interface{}) int {
+	var buffer bytes.Buffer
 	lastInsertId := 0
-	err := db.conn.QueryRow("INSERT INTO brands (name) VALUES($1) RETURNING id", args...).Scan(&lastInsertId)
+	buffer.WriteString(sql_query)
+	buffer.WriteString(" RETURNING id")
+	err := db.conn.QueryRow(buffer.String(), args...).Scan(&lastInsertId)
 	if err != nil {
 	  log.Fatal(err)
 	}

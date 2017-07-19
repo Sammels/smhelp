@@ -5,7 +5,7 @@ import {
   HashRouter as Router,
   Route
 } from 'react-router-dom'
-import { returntypeof } from 'react-redux-typescript';
+
 
 import Main from "./Main";
 import Account from "./Account";
@@ -13,6 +13,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import { getUserInfo } from '../actions/userActions';
+
+import './css/wrapper.scss';
+
 
 export interface IWrapperClassProps {
 

@@ -17,8 +17,8 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
 
     showUserMenu () {
         return (<div>
-            <a href="javascript:void(0);" onClick={ () => this.logout() } className="login-link">Выход</a>
             <a href="#/account" className="login-link">Кабинет</a>
+            <a href="javascript:void(0);" onClick={ () => this.logout() } className="login-link">Выход</a>
         </div>)
     }
 
@@ -30,9 +30,7 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
 
     render () {
         return <div className='header'>
-                    <div className='header-top'>
-                        { window['userInfo'] ? this.showUserMenu() : this.showLogIn() }
-                    </div>
+                    <div className='header-top'></div>
                     <div className='header-bottom'>
                         <div className="header-logo">
                             <img src="/static/img/logo.png" className="logo"/>
@@ -45,6 +43,7 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
                                 <li><a href="">Лайки</a></li>
                             </ul>
                         </nav>
+                        <div className="account">{ window['userInfo'] ? this.showUserMenu() : this.showLogIn() }</div>
                     </div>
                 </div>;
       }

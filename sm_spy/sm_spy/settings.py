@@ -32,6 +32,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
 
 # Application definition
 
@@ -48,6 +51,7 @@ THIRD_PARTY_INSTALLED_APPS = [
     'social_django',
     'djcelery',
     'rest_framework',
+    'debug_toolbar'
 ]
 
 CUSTOM_INSTALLED_APPS = [
@@ -59,6 +63,7 @@ CUSTOM_INSTALLED_APPS = [
 INSTALLED_APPS = DJANGO_INSTALLED_APPS + THIRD_PARTY_INSTALLED_APPS + CUSTOM_INSTALLED_APPS
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -66,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware'
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'sm_spy.urls'

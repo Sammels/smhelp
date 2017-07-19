@@ -8,6 +8,7 @@ import (
 	"strings"
 	"encoding/json"
 	"strconv"
+	"time"
 )
 
 
@@ -57,12 +58,22 @@ func insertUsers(respose string, row []string, pg_conn *postgres.DB)  {
 	json.Unmarshal([]byte(respose), &res)
     	users := res.Response.Users
 	group_id, _ := strconv.Atoi(row[1])
+	current_time := time.Now().Local()
 	for _, user := range users {
-		pg_conn.Execute("INSERT INTO vk_persongroup (vk_id, group_id, bdate, first_name, " +
-			"has_mobile, last_name, photo_max_orig, sex) VALUES ($1, $2, $3, $4, " +
-			"$5, $6, $7, $8)", user["domain"], group_id,
-			user["bdate"], user["first_name"], user["has_mobile"], user["last_name"],
-			user["photo_max_orig"], user["sex"])
+		var insertId int
+		data := pg_conn.Find("SELECT id FROM vk_persongroup WHERE vk_id = $1", user["domain"])
+		if (len(data) > 0) {
+			insertId64 := data[0]["id"].(int64)
+			insertId = int(insertId64)
+		} else {
+			insertId = pg_conn.Insert("INSERT INTO vk_persongroup (vk_id, bdate, first_name, " +
+				"has_mobile, last_name, photo_max_orig, sex) VALUES ($1, $2, $3, $4, " +
+				"$5, $6, $7)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
+				user["last_name"], user["photo_max_orig"], user["sex"])
+
+		}
+		pg_conn.Execute("INSERT INTO vk_personsgroups (group_id, person_id, dt_checking) " +
+			"VALUES ($1, $2, $3)", group_id, insertId,  current_time)
 	}
 	pg_conn.Execute("UPDATE vk_watchinggroups SET dt_last_update=NOW() WHERE id = $1", group_id)
 }
