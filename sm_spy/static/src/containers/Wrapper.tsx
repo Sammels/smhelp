@@ -17,18 +17,17 @@ import { getUserInfo } from '../actions/userActions';
 import './css/wrapper.scss';
 
 
-export interface IWrapperClassProps {
+interface IWrapperClassProps {
 
 }
 
-export interface IWrapperClassState {
+interface IWrapperClassState {
 
 }
 
 export interface StateFromProps {
     label: number
 }
-
 
 interface DispatchFromProps {
   onGetUserInfo: () => void;
