@@ -3,14 +3,15 @@ import *  as constants from '../constants';
 const initialState = {}
 
 
-const groupsReducer = (state = initialState, action: any) => {
+const userReducer = (state = initialState, action: any) => {
     var result: any = state || {};
     switch (action.type) {
-        case constants.GROUP_USERS_INFO_SUCCESS:
-            return result;
+        case constants.USER_INFO_SUCCESS:
+            break;
         default:
             return state;
     }
+    return result;
 }
 
-export default groupsReducer;
+export default userReducer;

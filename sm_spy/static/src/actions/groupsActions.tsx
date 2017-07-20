@@ -8,3 +8,10 @@ export const getGroupUsersInfo = function (group_id: number): object {
         promise: request.get('/vk/get_overview_users/' + group_id)
     }
 }
+
+export const getGroups = function (): object {
+    return {
+        types: [constants.GET_GROUPS, constants.GET_GROUPS_SUCCESS, constants.GET_GROUPS_FAIL],
+        promise: request.get('/vk/get_groups/')
+    }
+}

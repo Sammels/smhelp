@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from 'react-redux';
 
 import Sidebar from '../components/Account/Sidebar';
-import { getGroupUsersInfo } from '../actions/groupsActions';
+import { getGroupUsersInfo, getGroups } from '../actions/groupsActions';
 
 import './css/account.scss';
 
@@ -12,35 +12,35 @@ interface IAccountProps {
     history: any;
 }
 
-export interface IAccountClassState {
+interface IAccountClassState {
 
 }
 
-export interface StateFromProps {
-
+interface StateFromProps {
+    groups: object,
+    groupInfo: object,
 }
 
 interface DispatchFromProps {
     onGetGroupUsersInfo: (group_id: number) => void;
+    getGroups: () => void;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
 
 
-class Account extends React.Component<AccountRedux, any> {
+class Account extends React.Component<AccountRedux, IAccountClassState> {
 
-    group_id: number;
-
-    constructor(props: AccountRedux) {
-        super(props);
-        this.group_id = 1;
+    componentDidMount() {
+        this.props.getGroups();
     }
 
     getGroupUsersInfo() {
-        this.props.onGetGroupUsersInfo(this.group_id);
+        this.props.onGetGroupUsersInfo(3);
     }
 
     render () {
+        console.log(this.props.groups);
         return <div>
             <div className="account-header">
                 <h3>Статистика</h3>
@@ -53,12 +53,14 @@ class Account extends React.Component<AccountRedux, any> {
     }
 }
 
-const mapStateToProps= (state: any, ownProp: IAccountProps) => ({
-
+const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
+    groups: state.groupsReducer.groups,
+    groupInfo: state.groupsReducer.groupInfo,
 });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    onGetGroupUsersInfo: (group_id: number) => dispatch(getGroupUsersInfo(group_id))
+const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
+    onGetGroupUsersInfo: (group_id: number) => { dispatch(getGroupUsersInfo(group_id))},
+    getGroups: () => { dispatch(getGroups()) }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

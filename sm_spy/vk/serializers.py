@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from vk.models import PersonsGroups
+from vk.models import PersonsGroups, WatchingGroups
 
 
 class GetOverviewUsersSerializer(serializers.ModelSerializer):
@@ -12,3 +12,9 @@ class GetOverviewUsersSerializer(serializers.ModelSerializer):
 
     def get_count(self, obj):
         return obj['count']
+
+
+class GetGroups(serializers.ModelSerializer):
+    class Meta:
+        model = WatchingGroups
+        fields = ('id', 'name', 'dt_last_update', )
