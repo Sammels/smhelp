@@ -13,4 +13,8 @@ declare module "redux-sync-promise" {
 
 declare function connect(mapStateToProps: any, mapDispatchToProps: any): void;
 
+declare interface ObjectConstructor {
+    assign(...objects: Object[]): Object;
+}
+
 

@@ -40,7 +40,6 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     render () {
-        console.log(this.props.groups);
         return <div>
             <div className="account-header">
                 <h3>Статистика</h3>
@@ -59,8 +58,8 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
-    onGetGroupUsersInfo: (group_id: number) => { dispatch(getGroupUsersInfo(group_id))},
-    getGroups: () => { dispatch(getGroups()) }
+    onGetGroupUsersInfo: (group_id: number) => dispatch(getGroupUsersInfo(group_id)),
+    getGroups: () => dispatch(getGroups())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

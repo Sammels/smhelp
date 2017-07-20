@@ -2,11 +2,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
+import ReduxThunk from 'redux-thunk';
 
 import createHistory from 'history/createBrowserHistory'
 
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
+import { ConnectedRouter, routerMiddleware } from 'react-router-redux'
 
 import reducers from './reducers'
 
@@ -16,8 +16,8 @@ const middleware = routerMiddleware(history)
 import promiseMiddleware from './middleware/promiseMiddleware';
 
 const store = createStore(
-  reducers,
-  applyMiddleware(middleware, promiseMiddleware, thunk)
+    reducers,
+    applyMiddleware(promiseMiddleware, ReduxThunk)
 )
 
 import WrapperClass from "./containers/Wrapper";

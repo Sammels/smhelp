@@ -2,8 +2,8 @@ import *  as constants from '../constants';
 
 
 const initialState = {
-    // groupInfo: {},
-    // groups: []
+    groupInfo: {},
+    groups: []
 }
 
 
@@ -14,10 +14,10 @@ const groupsReducer = (state = initialState, action: any) => {
             result.groupInfo = action.result.data;
             break;
         case constants.GET_GROUPS_SUCCESS:
-            result.groups = action.result.data;
-            break;
+            return Object.assign({}, result, {groups: action.result.data});
+        default:
+            return state
     }
-    return result;
 }
 
 export default groupsReducer;
