@@ -2,8 +2,8 @@ import *  as constants from '../constants';
 
 
 const initialState = {
-    groupInfo: {},
-    groups: []
+    groupInfo: Object,
+    groups: Array
 }
 
 
