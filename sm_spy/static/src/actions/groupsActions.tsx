@@ -15,3 +15,14 @@ export const getGroups = function (): object {
         promise: request.get('/vk/get_groups/')
     }
 }
+
+export const addGroup = function (data: any) {
+    var params = new URLSearchParams();
+    for (let key in data) {
+        params.append(key, data[key])
+    }
+    return {
+        types: [constants.ADD_GROUP, constants.ADD_GROUP_SUCCESS, constants.ADD_GROUP_FAIL],
+        promise: request.post('/vk/add_group/', params)
+    }
+}

@@ -33,6 +33,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='persongroup',
             name='group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk.WatchingGroups'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk_app.WatchingGroups'),
         ),
     ]

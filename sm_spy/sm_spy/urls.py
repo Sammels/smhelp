@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('core.urls', namespace="core")),
     url(r'^user/', include('user.urls', namespace='user')),
-    url(r'^vk/', include('vk.urls', namespace='vk')),
+    url(r'^vk/', include('vk_app.urls', namespace='vk_app')),
 ]
 
 if settings.DEBUG:

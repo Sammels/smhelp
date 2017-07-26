@@ -10,3 +10,6 @@ export const GET_GROUPS = 'GET_GROUPS';
 export const GET_GROUPS_SUCCESS = 'GET_GROUPS_SUCCESS';
 export const GET_GROUPS_FAIL = 'GET_GROUPS_FAIL';
 
+export const ADD_GROUP = 'ADD_GROUP';
+export const ADD_GROUP_SUCCESS = 'ADD_GROUP_SUCCESS';
+export const ADD_GROUP_FAIL = 'ADD_GROUP_FAIL';

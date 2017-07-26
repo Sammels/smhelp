@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('vk', '0006_auto_20170719_0153'),
+        ('vk_app', '0006_auto_20170719_0153'),
     ]
 
     operations = [

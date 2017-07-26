@@ -1,8 +1,88 @@
+body {
+  background: #f7f7f7;
+}
+
 .account-header {
   height: 55px;
   width: 100%;
   text-align: center;
   h3 {
     font-size: 16px;
+  }
+}
+.account-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  #content {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    background: #fff;
+    width: 600px;
+  }
+  .third-menu {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: 180px;
+    background: #fff;
+    h3 {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      color: #3F454B;
+      text-transform: none;
+      margin: 0;
+      padding: 10px 20px 10px 24px;
+    }
+    .third-menu-content {
+      padding: 10px 20px 10px 24px;
+    }
+    button {
+      &:hover {
+        background: #3cb0fd;
+        background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+        background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+      }
+      background: #337ab7;
+      background-image: -webkit-linear-gradient(top, #337ab7, #337ab7);
+      background-image: -moz-linear-gradient(top, #337ab7, #337ab7);
+      background-image: -ms-linear-gradient(top, #337ab7, #337ab7);
+      background-image: -o-linear-gradient(top, #337ab7, #337ab7);
+      background-image: linear-gradient(to bottom, #337ab7, #337ab7);
+      -webkit-border-radius: 9px;
+      -moz-border-radius: 9px;
+      border-radius: 9px;
+      color: #ffffff;
+      font-size: 12px;
+      padding: 6px 10px 6px 10px;
+      text-decoration: none;
+      border: none;
+      outline: none;
+      margin: 0 0 0 24px;
+    }
+    .add_group {
+      padding: 10px 20px 10px 24px;
+      display: flex;
+      input {
+        &:hover {
+          outline: none;
+        }
+        font-family: Helvetica, Arial, sans-serif;
+        padding: 0 10px;
+        height: 30px;
+        border: 1px solid #ccc;
+        line-height: 28px;
+        font-size: 11px;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        outline: none;
+        width: 113px;
+      }
+      button {
+        margin: 0 0 0 4px;
+      }
+    }
   }
 }

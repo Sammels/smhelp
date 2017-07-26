@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vk', '0002_auto_20170703_0933'),
+        ('vk_app', '0002_auto_20170703_0933'),
     ]
 
     operations = [

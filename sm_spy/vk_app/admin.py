@@ -1,5 +1,5 @@
 from django.contrib import admin
-from vk.models import WatchingGroups
+from vk_app.models import WatchingGroups
 
 
 class WatchingGroupsAdmin(admin.ModelAdmin):

@@ -5,3 +5,4 @@ django-celery==3.2.1
 redis==2.10.5
 django-redis-cache==1.7.1
 djangorestframework==3.6.3
+vk==2.0.2

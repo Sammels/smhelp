@@ -18,8 +18,11 @@ export default class Sidebar extends React.Component<ISidebarProps, any> {
 
     render () {
         return <div className="account-sidebar">
+            <h3>Выберите: </h3>
             <ul>
                 <li><a onClick={ () => this.getPartData() }>Участники группы</a></li>
+                <li><a onClick={ () => this.getPartData() }>География подписчиков</a></li>
+                <li><a onClick={ () => this.getPartData() }>Активные участники</a></li>
             </ul>
         </div>
     }

@@ -1,25 +1,17 @@
 .header {
     width: 100%;
     height: auto;
-}
-
-.header-top {
-    height: 46px;
     background: #25313d;
     color: #fff;
 }
 
-.header-bottom {
-    height: 74px;
-    background: #fff;
-    display: flex;
-    justify-content: space-around;
-    padding: 30px 0;
-    width:1000px;
+.header-top {
+    height: 46px;
+    width: 1000px;
     margin:0 auto;
     position: relative;
     .account {
-        margin: -66px 0 0 0;
+        margin: 12px 0 0 0;
         position: absolute;
         right: 0;
         .login-link {
@@ -27,47 +19,23 @@
             padding: 10px 10px 0 0;
         }
     }
-}
 
-.header-bottom nav > ul {
-    position: relative;
-    display: flex;
-    list-style: none;
-    justify-content: space-between;
-    width: 600px;
-    margin: 0 auto;
-}
+    .header-logo {
+        width: 200px;
+        height:50px;
+        margin: 12px 0;
+        position: absolute;
+    }
 
-.header-bottom nav > ul > li {
-    font: 500 14px "Ubuntu", Helvetica, Arial, sans-serif;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-}
+    .header-logo .logo {
+        height: 30px;
+        margin: 16px 0;
+    }
 
-.header-bottom nav > ul > li a {
-    cursor: pointer;
-    color: #25313d;
-    text-decoration: none;
-}
-
-.header-bottom nav > ul > li a:hover {
-    color:#cfaa45;
-}
-
-.header-logo {
-    width: 200px;
-    height:50px;
-    margin: -15px 0;
-}
-
-.header-logo .logo {
-    height: 30px;
-}
-
-.header-logo > span {
-    text-transform: uppercase;
-    display: block;
-    position: absolute;
-    color: #47313d;
-    margin: 0 0 0 -13px;
+    .header-logo > span {
+        text-transform: uppercase;
+        display: block;
+        position: absolute;
+        color: #fff;
+    }
 }

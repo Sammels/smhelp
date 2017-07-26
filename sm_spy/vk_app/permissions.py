@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from vk.models import WatchingGroups
+from vk_app.models import WatchingGroups
 
 
 class IsGroupOwner(IsAuthenticated):

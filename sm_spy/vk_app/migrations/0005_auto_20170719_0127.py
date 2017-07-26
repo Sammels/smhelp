@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vk', '0004_watchinggroups_dt_last_update'),
+        ('vk_app', '0004_watchinggroups_dt_last_update'),
     ]
 
     operations = [
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='persongroup',
             name='group',
-            field=models.ManyToManyField(to='vk.WatchingGroups'),
+            field=models.ManyToManyField(to='vk_app.WatchingGroups'),
         ),
         migrations.AlterField(
             model_name='watchinggroups',

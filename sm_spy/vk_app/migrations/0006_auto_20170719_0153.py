@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vk', '0005_auto_20170719_0127'),
+        ('vk_app', '0005_auto_20170719_0127'),
     ]
 
     operations = [
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('dt_checking', models.DateField()),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk.WatchingGroups')),
+                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk_app.WatchingGroups')),
             ],
         ),
         migrations.RemoveField(
@@ -28,11 +28,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='personsgroups',
             name='person',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk.PersonGroup'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vk_app.PersonGroup'),
         ),
         migrations.AddField(
             model_name='persongroup',
             name='pgroup',
-            field=models.ManyToManyField(through='vk.PersonsGroups', to='vk.WatchingGroups'),
+            field=models.ManyToManyField(through='vk_app.PersonsGroups', to='vk_app.WatchingGroups'),
         ),
     ]
