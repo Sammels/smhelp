@@ -11,8 +11,7 @@ const groupsReducer = (state = initialState, action: any) => {
     var result: any = state || {};
     switch (action.type) {
         case constants.GROUP_USERS_INFO_SUCCESS:
-            result.groupInfo = action.result.data;
-            break;
+            return  Object.assign({}, result, {groupInfo: action.result.data});
         case constants.GET_GROUPS_SUCCESS:
             return Object.assign({}, result, {groups: action.result.data});
         case constants.ADD_GROUP_SUCCESS:
