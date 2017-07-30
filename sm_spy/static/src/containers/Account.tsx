@@ -1,10 +1,10 @@
 import * as React from "react";
 import { connect } from 'react-redux';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell } from 'recharts';
 
 import Sidebar from '../components/Account/Sidebar';
-import { getGroupUsersInfo, getGroups, addGroup } from '../actions/groupsActions';
+import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography } from '../actions/groupsActions';
 
 import './css/account.scss';
 
@@ -34,15 +34,23 @@ interface IAccountClassState {
     html_content: object
 }
 
+interface groupGeagraphyContainer {
+    city_id: number,
+    count: number,
+    city_name: string
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
+    groupInfoGegraphy: Array<groupGeagraphyContainer>
 }
 
 interface DispatchFromProps {
     onGetGroupUsersInfo: (group_id: number) => Promise<any>;
     getGroups: () => Promise<any>;
-    addGroup: (data: addGroupData) => Promise<any>
+    addGroup: (data: addGroupData) => Promise<any>;
+    getGroupsGeography: (group_id: number) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -77,7 +85,9 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     getGroupUsersInfo(action: string) {
         switch (action) {
             case 'members':
-                this.props.onGetGroupUsersInfo(this.state.currentGroup).then(() => { this.memebersContent() });
+                this.props.onGetGroupUsersInfo(this.state.currentGroup).then( () => { this.memebersContent() });
+            case 'geography':
+                this.props.getGroupsGeography(this.state.currentGroup).then( () => { this.geographyContent() } )
             default:
                 this.noDataContent()
 
@@ -90,9 +100,39 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
+    geographyContent() {
+        const data = this.props.groupInfoGegraphy.map((object, index) => {
+           return {'name': object.city_name, 'value': object.count}
+        });
+        const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+        this.state.html_content = (
+            <div className="center-pie"><PieChart width={410} height={410}>
+                <Pie
+                    activeIndex={[]}
+                    activeShape={[]}
+                    data={data}
+                    cx={150}
+                    cy={150}
+                    outerRadius={150}
+                    paddingAngle={0}
+                    fill="#8268ee"
+                    isAnimationActive={false}
+                >
+                    {
+                        data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                    }
+                </Pie>
+                <Legend width={140} height={76} layout='vertical' align='right' verticalAlign='middle' />
+            </PieChart></div>);
+        this.setState({
+            'html_content': this.state.html_content
+        });
+    }
+
     memebersContent() {
-        if (!this.props.groupsList.length) {
+        if (!this.props.groupInfo.length) {
             this.state.html_content = <p>Извините, данные не обнаружены</p>;
+            return;
         }
         const data = this.props.groupInfo.map((object, index) => {
             return {'name': object.dt_checking, 'count': object.count}
@@ -174,12 +214,14 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupsList: state.groupsReducer.groups,
     groupInfo: state.groupsReducer.groupInfo,
+    groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     onGetGroupUsersInfo: (group_id: number) => dispatch(getGroupUsersInfo(group_id)),
     getGroups: () => dispatch(getGroups()),
-    addGroup: (data: addGroupData) => dispatch(addGroup(data))
+    addGroup: (data: addGroupData) => dispatch(addGroup(data)),
+    getGroupsGeography: (group_id: number) => dispatch(getGroupsGeography(group_id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

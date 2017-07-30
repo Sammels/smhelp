@@ -18,6 +18,15 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     background: #fff;
     width: 600px;
+
+    .center-pie {
+      width: 410px;
+      margin: 0 auto;
+    }
+
+    .recharts-legend-wrapper {
+      margin: 0 -50px 0 0;
+    }
   }
   .third-menu {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);

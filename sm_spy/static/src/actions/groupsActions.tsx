@@ -16,6 +16,14 @@ export const getGroups = function (): object {
     }
 }
 
+export const getGroupsGeography = function (group_id: number): object {
+    return {
+        types: [constants.GET_GROUP_GEOGRAPHY, constants.GET_GROUP_GEOGRAPHY_SUCCESS,
+                constants.GET_GROUP_GEOGRAPHY_FAIL],
+        promise: request.get('/vk/get_group_geography/' + group_id)
+    }
+}
+
 export const addGroup = function (data: any) {
     var params = new URLSearchParams();
     for (let key in data) {

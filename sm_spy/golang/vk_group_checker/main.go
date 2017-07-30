@@ -1,7 +1,5 @@
 package main
 
-import "C"
-
 import (
 	"github.com/yanple/vk_api"
 	"../libs/postgres"
@@ -9,6 +7,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"time"
+	"log"
 )
 
 
@@ -33,6 +32,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
 		if strResp != "" {
 			insertUsers(strResp, row, &pg_conn)
 		}
@@ -66,10 +66,11 @@ func insertUsers(respose string, row []string, pg_conn *postgres.DB)  {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
 		} else {
+			log.Println(user)
 			insertId = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
-				"has_mobile, last_name, photo_max_orig, sex) VALUES ($1, $2, $3, $4, " +
-				"$5, $6, $7)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
-				user["last_name"], user["photo_max_orig"], user["sex"])
+				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
+				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
+				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 
 		}
 		pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) " +

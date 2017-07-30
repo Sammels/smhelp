@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from vk_app.models import PersonsGroups, WatchingGroups
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
+
+
+class CountSerializer(serializers.ModelSerializer):
+    count = serializers.SerializerMethodField()
+
+    def get_count(self, obj):
+        return obj['count']
 
 
 class GetOverviewUsersSerializer(serializers.ModelSerializer):
@@ -12,6 +19,21 @@ class GetOverviewUsersSerializer(serializers.ModelSerializer):
 
     def get_count(self, obj):
         return obj['count']
+
+
+class GetGroupsGeographySerializator(serializers.ModelSerializer):
+    count = serializers.SerializerMethodField()
+    city_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PersonGroup
+        fields = ('city_id', 'count', 'city_name', )
+
+    def get_count(self, obj):
+        return obj['count']
+
+    def get_city_name(self, obj):
+        return obj['city__name']
 
 
 class GetGroupsSerializator(serializers.ModelSerializer):

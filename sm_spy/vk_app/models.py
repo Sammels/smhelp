@@ -3,13 +3,12 @@ from django.contrib.auth.models import User
 
 
 class Country(models.Model):
-    vk_id = models.IntegerField()
     name = models.CharField(max_length=255)
 
 
 class City(models.Model):
-    vk_id = models.IntegerField()
     name = models.CharField(max_length=255)
+    country = models.ForeignKey(Country)
 
 
 class WatchingGroups(models.Model):
