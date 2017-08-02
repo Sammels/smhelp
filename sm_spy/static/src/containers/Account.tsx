@@ -83,14 +83,14 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     getGroupUsersInfo(action: string) {
-        switch (action) {
-            case 'members':
-                this.props.onGetGroupUsersInfo(this.state.currentGroup).then( () => { this.memebersContent() });
-            case 'geography':
-                this.props.getGroupsGeography(this.state.currentGroup).then( () => { this.geographyContent() } )
-            default:
-                this.noDataContent()
-
+        if (action == 'members') {
+            this.props.onGetGroupUsersInfo(this.state.currentGroup).then(() => {
+                this.memebersContent()
+            });
+        } else if(action == 'geography') {
+            this.props.getGroupsGeography(this.state.currentGroup).then( () => { this.geographyContent() } )
+        } else {
+            this.noDataContent()
         }
     }
 
