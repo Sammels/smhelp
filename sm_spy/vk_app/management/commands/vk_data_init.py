@@ -14,7 +14,7 @@ class Command(BaseCommand):
         for d in data:
             country = Country(id=d['cid'], name=d['title'])
             country.save()
-            data_cities = api.database.getCities(country_id=2, count=1000, need_all=1)
+            data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1)
             trying = 1
             while len(data_cities) == 1000:
                 for data_city in data_cities:
