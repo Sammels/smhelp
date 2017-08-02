@@ -7,3 +7,8 @@ For running celery listener:
 
     celery -A sm_spy worker -l info
     celery -A sm_spy beat -l info
+
+For working you need to install:
+
+apt install golang-go
+export GOPATH=$HOME/go
