@@ -18,13 +18,13 @@ class Command(BaseCommand):
             trying = 1
             while len(data_cities) == 1000:
                 for data_city in data_cities:
-                    city = City(country_id=2, name=data_city['title'], id=data_city['cid'])
+                    city = City(country_id=d['cid'], name=data_city['title'], id=data_city['cid'])
                     city.save()
                 if len(data_cities) == 1000:
-                    data_cities = api.database.getCities(country_id=2, count=1000, need_all=1,
+                    data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1,
                                                          offset=1000*trying)
                     trying += 1
 
             for data_city in data_cities:
-                city = City(country_id=2, name=data_city['title'], id=data_city['cid'])
+                city = City(country_id=d['cid'], name=data_city['title'], id=data_city['cid'])
                 city.save()
