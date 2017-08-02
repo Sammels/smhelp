@@ -1,13 +1,1 @@
-.footer {
-    height: 62px;
-    width: 100%;
-    border-bottom: 2px solid #000;
-    background: #363e47;
-    background: -moz-linear-gradient(top, #363e47 0, #444b54 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #363e47), color-stop(100%, #444b54));
-    background: -webkit-linear-gradient(top, #363e47 0, #444b54 100%);
-    background: -o-linear-gradient(top, #363e47 0, #444b54 100%);
-    background: -ms-linear-gradient(top, #363e47 0, #444b54 100%);
-    background: linear-gradient(to bottom, #363e47 0, #444b54 100%);
-
-}
+.footer{height:62px;width:100%;border-bottom:2px solid #000;background:#363e47;background:-moz-linear-gradient(top,#363e47 0,#444b54 100%);background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#363e47),color-stop(100%,#444b54));background:-webkit-linear-gradient(top,#363e47,#444b54);background:-o-linear-gradient(top,#363e47 0,#444b54 100%);background:-ms-linear-gradient(top,#363e47 0,#444b54 100%);background:linear-gradient(180deg,#363e47 0,#444b54)}
