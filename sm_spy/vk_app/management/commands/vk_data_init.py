@@ -10,7 +10,7 @@ class Command(BaseCommand):
         api = vk_api.API(session)
         Country(id=0, name='Не определен').save()
         City(country_id=0, id=0, name='Не определен').save()
-        data = api.database.getCountries(count=1000, offset=100)
+        data = api.database.getCountries(count=1000)
         for d in data:
             country = Country(id=d['cid'], name=d['title'])
             country.save()
