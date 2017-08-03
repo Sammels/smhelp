@@ -40,3 +40,7 @@ class GetGroupsSerializator(serializers.ModelSerializer):
     class Meta:
         model = WatchingGroups
         fields = ('id', 'name', 'dt_last_update', )
+
+class GetGroupsGeographyIntersection(serializers.ModelSerializer):
+    class Meta:
+        model = WatchingGroups

@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 import vk as vk_api
 from django.http import HttpResponseBadRequest
 
-from vk_app.serializers import GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator
+from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
+                                GetGroupsGeographyIntersection)
 from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
 from vk_app.permissions import IsGroupOwner
 
@@ -60,4 +61,12 @@ class GetGeographyMembers(generics.ListAPIView):
         members = PersonsGroups.objects.filter(group_id=self.kwargs['pk']).values_list('person_id')
         queryset = PersonGroup.objects.values('city_id', 'city__name').filter(id__in=members).annotate(count=Count('*'))
         return queryset
+
+class GetGroupsIntersection(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = GetGroupsGeographyIntersection
+
+    def get_queryset(self):
+        print(self.request)
+        return self.queryset
 

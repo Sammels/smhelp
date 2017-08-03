@@ -43,6 +43,12 @@ body {
     }
     .third-menu-content {
       padding: 10px 20px 10px 24px;
+      a {
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
     button {
       &:hover {
