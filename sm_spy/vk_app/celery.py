@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task()
-def vk_checker():
+def vk_checker(group_id=None):
     logger.info("vk_checker is stated")
-    subprocess.run('go {}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_group_checker.so')))
+    command = ['{}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_group_checker.so'))]
+    if group_id:
+        command += [str(group_id)]
+    subprocess.Popen(command)

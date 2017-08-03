@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 	"log"
+	"os"
+	"fmt"
 )
 
 
@@ -40,9 +42,18 @@ func main() {
 }
 
 func getGroups(pg_conn *postgres.DB) [][]string {
+	var groupId string
+	if len(os.Args[1:]) > 0 {
+		groupId = os.Args[1:][0]
+	}
 	groups_store := [][]string{}
-	groups := pg_conn.Find("SELECT link, id FROM vk_app_watchinggroups WHERE " +
-		"dt_last_update < CURRENT_DATE OR dt_last_update is NULL")
+	sql_query := "SELECT link, id FROM vk_app_watchinggroups WHERE " +
+		"dt_last_update < CURRENT_DATE OR dt_last_update is NULL"
+	if len(groupId) > 0 {
+		groupId_int, _ := strconv.Atoi(groupId)
+		sql_query = fmt.Sprintf("%s AND id = %d", sql_query, groupId_int)
+	}
+	groups := pg_conn.Find(sql_query)
 	for _, group := range groups {
 		group_split := strings.Split(group["link"].(string), "/")
 		group_id := group_split[len(group_split)-1]

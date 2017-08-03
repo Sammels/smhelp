@@ -8,6 +8,7 @@ from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializato
                                 GetGroupsGeographyIntersection)
 from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
 from vk_app.permissions import IsGroupOwner
+from vk_app.celery import vk_checker
 
 
 class GetOverviewUsers(generics.ListAPIView):
@@ -50,6 +51,7 @@ class AddGroup(generics.CreateAPIView, generics.ListAPIView):
             group.save()
         except vk_api.exceptions.VkAPIError:
             return HttpResponseBadRequest()
+        vk_checker.delay(group.pk)
         return self.list(request, *args, **kwargs)
 
 
