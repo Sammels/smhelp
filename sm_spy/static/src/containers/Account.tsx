@@ -15,6 +15,11 @@ interface addGroupData {
     name: string
 }
 
+interface selectValue {
+    value: number,
+    name: string
+}
+
 interface groupContainer{
     name: string,
     id: number
@@ -44,10 +49,17 @@ interface groupGeagraphyContainer {
     city_name: string
 }
 
+interface groupIntersectionContainer {
+    first_name: string,
+    last_name: string,
+    vk_id: string
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
     groupInfoGegraphy: Array<groupGeagraphyContainer>
+    groupInfoIntersection: Array<groupIntersectionContainer>
 }
 
 interface DispatchFromProps {
@@ -108,6 +120,67 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
+    changingSelect(object_value: selectValue) {
+        this.props.getGroupsIntersection(this.state.currentGroup, object_value.value).then(
+             () => { this.groupsIntersectionContentSecondStep() } )
+    }
+
+    groupsIntersectionContentSecondStep() {
+        const gloupsList = Object.keys(this.props.groupsList).length ? this.props.groupsList : null;
+        const options = gloupsList
+            .filter((object) => { return  object.id != this.state.currentGroup })
+            .map((object, index) => { return { 'value': object.id, 'label': object.name }
+        });
+        const data = [
+            {'name': 'Пересчение', 'value': this.props.groupInfoIntersection.length},
+            {'name': 'Участинки мой группы', 'value': 100 - this.props.groupInfoIntersection.length}
+        ];
+        const group_data = this.props.groupInfoIntersection.map((object, index) => {
+            return {'name': object.first_name + ' ' + object.last_name,
+                    //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
+                    'link': object.vk_id
+            }
+        });
+        const COLORS = ['#0088FE', '#00C49F'];
+        const intersection = (
+            <div className="center-pie"><PieChart width={410} height={410}>
+                <Pie
+                    activeIndex={[]}
+                    activeShape={[]}
+                    data={data}
+                    cx={150}
+                    cy={150}
+                    outerRadius={150}
+                    paddingAngle={0}
+                    fill="#8268ee"
+                    isAnimationActive={false}
+                >
+                    {
+                        data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                    }
+                </Pie>
+                <Legend width={140} height={76} layout='vertical' align='right' verticalAlign='middle' />
+            </PieChart>
+
+            <BootstrapTable data={group_data} striped={true} hover={true}>
+              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
+              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+            </BootstrapTable>
+        </div>);
+        const content = (<div>
+            <Select
+              name="groups_inersection"
+              value=""
+              options={ options }
+              onChange={(object_value: selectValue) => this.changingSelect(object_value)}
+            />
+            <div>{intersection}</div>
+        </div>);
+        this.setState({
+            'html_content': content
+        });
+    }
+
     groupsIntersectionContent() {
         const gloupsList = Object.keys(this.props.groupsList).length ? this.props.groupsList : null;
         const options = gloupsList
@@ -121,21 +194,16 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             return false;
         }
         this.state.html_content = (
-            <div>
             <Select
-              name="form-field-name"
-              value="one"
+              name="groups_inersection"
+              value=""
               options={ options }
-               onChange={() => {}}
+              onChange={(object_value: selectValue) => this.changingSelect(object_value)}
             />
-            </div>
         );
         this.setState({
             'html_content': this.state.html_content
         });
-
-            // this.props.getGroupsIntersection(this.state.currentGroup, this.state.crossGroup).then(
-            //     () => { this.groupsIntersectionContent() } )
     }
 
     geographyContent() {
@@ -217,12 +285,12 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         })
     }
 
-    switchCurrentGroup(index: number) {
-        if (index == this.state.currentGroup) {
+    switchCurrentGroup(group_id: number) {
+        if (group_id == this.state.currentGroup) {
             return false;
         }
         this.setState({
-            currentGroup: index
+            currentGroup: group_id
         });
     }
 
@@ -244,8 +312,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                     {gloupsList ? (gloupsList.map((objects: groupContainer, index: number) => {
                         return <a href="javascript:void(0)"
                                   key={ index }
-                                  onClick={ () => this.switchCurrentGroup(index)  }
-                                  className={ (index === self.state.currentGroup) ? 'active' : '' }
+                                  onClick={ () => this.switchCurrentGroup(objects.id)  }
+                                  className={ (objects.id === self.state.currentGroup) ? 'active' : '' }
                                 >
                             { objects['name'] }
                             </a>
@@ -270,6 +338,7 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupsList: state.groupsReducer.groups,
     groupInfo: state.groupsReducer.groupInfo,
     groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
+    groupInfoIntersection: state.groupsReducer.groupIntersection
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({

@@ -18,6 +18,8 @@ const groupsReducer = (state = initialState, action: any) => {
             return Object.assign({}, result, {groups: action.result.data});
         case constants.ADD_GROUP_SUCCESS:
             return Object.assign({}, result, {groups: action.result.data});
+        case constants.GET_GROUP_INTERSECTION_SUCCESS:
+            return Object.assign({}, result, {groupIntersection: action.result.data});
         default:
             return state
     }

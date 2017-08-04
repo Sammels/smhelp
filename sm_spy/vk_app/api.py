@@ -5,7 +5,7 @@ import vk as vk_api
 from django.http import HttpResponseBadRequest
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
-                                GetGroupsGeographyIntersection)
+                                GetGroupsIntersectionSerializator)
 from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
 from vk_app.permissions import IsGroupOwner
 from vk_app.celery import vk_checker
@@ -66,9 +66,15 @@ class GetGeographyMembers(generics.ListAPIView):
 
 class GetGroupsIntersection(generics.ListAPIView):
     permission_classes = (IsAuthenticated, )
-    serializer_class = GetGroupsGeographyIntersection
+    serializer_class = GetGroupsIntersectionSerializator
 
     def get_queryset(self):
-        print(self.request)
-        return self.queryset
+        group_first = PersonsGroups.objects.filter(group_id=self.kwargs['first_group']).values_list('person_id')
+        group_second = PersonsGroups.objects.filter(group_id=self.kwargs['second_group']).values_list('person_id')
+        group_first = set([member_id[0] for member_id in group_first])
+        group_second = set([member_id[0] for member_id in group_second])
+        intersection = group_first & group_second
+        if not intersection:
+            return self.queryset
+        return PersonGroup.objects.filter(id__in=intersection)
 
