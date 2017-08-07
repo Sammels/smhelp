@@ -24,10 +24,19 @@ type vkResponse struct {
 
 func main() {
 	pg_conn := postgres.Init()
+	groups := getGroups(&pg_conn)
+	for len(groups) == 100 {
+		groupsAnalysis(groups, &pg_conn)
+		groups = getGroups(&pg_conn)
+	}
+	groupsAnalysis(groups, &pg_conn)
+}
+
+func groupsAnalysis(groups [][]string, pg_conn *postgres.DB) {
+	params := make(map[string]string)
 	var api = &vk_api.Api{}
 	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
-	params := make(map[string]string)
-	for _, row := range getGroups(&pg_conn) {
+	for _, row := range groups {
 		params["group_id"] = row[0]
 		params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
 		strResp, err := api.Request("groups.getMembers", params)
@@ -36,7 +45,7 @@ func main() {
 		}
 
 		if strResp != "" {
-			insertUsers(strResp, row, &pg_conn)
+			insertUsers(strResp, row, pg_conn)
 		}
 	}
 }
