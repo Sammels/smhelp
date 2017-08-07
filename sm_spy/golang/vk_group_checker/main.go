@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"strconv"
 	"time"
-	"log"
 	"os"
 	"fmt"
 )
@@ -24,31 +23,40 @@ type vkResponse struct {
 
 func main() {
 	pg_conn := postgres.Init()
-	groups := getGroups(&pg_conn)
-	for len(groups) == 1000 {
-		groupsAnalysis(groups, &pg_conn)
-		groups = getGroups(&pg_conn)
+	for _, row := range getGroups(&pg_conn) {
+		memberOfGroup := getMembers(row)
+		insertUsers(memberOfGroup, row, &pg_conn)
 	}
-	groupsAnalysis(groups, &pg_conn)
 }
 
-func groupsAnalysis(groups [][]string, pg_conn *postgres.DB) {
-	log.Println("Starting groups analis", len(groups))
-	params := make(map[string]string)
-	var api = &vk_api.Api{}
-	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
-	for _, row := range groups {
-		params["group_id"] = row[0]
-		params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
-		strResp, err := api.Request("groups.getMembers", params)
-		if err != nil {
-			panic(err)
-		}
+func strAnswerToSlice(vkRespose string) []map[string]interface{} {
+	res := vkResponse{}
+	json.Unmarshal([]byte(vkRespose), &res)
+    	users := res.Response.Users
+	return users
+}
 
-		if strResp != "" {
-			insertUsers(strResp, row, pg_conn)
+func getMembers(row []string) []map[string]interface{} {
+	var api = &vk_api.Api{}
+	offset := 0
+	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
+	params := make(map[string]string)
+	params["group_id"] = row[0]
+	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
+	strResp, _ := api.Request("groups.getMembers", params)
+	newUsersKeeper := strAnswerToSlice(strResp)
+	var usersKeeper = newUsersKeeper
+	for len(newUsersKeeper) >= 1000 {
+		usersKeeper = append(usersKeeper, newUsersKeeper...)
+		offset += 1
+		params["offset"] = strconv.Itoa(offset*1000)
+		strResp, _ := api.Request("groups.getMembers", params)
+		newUsersKeeper = strAnswerToSlice(strResp)
+		if len(newUsersKeeper) < 1000 && len(newUsersKeeper) > 0 {
+			usersKeeper = append(usersKeeper, newUsersKeeper...)
 		}
 	}
+	return usersKeeper
 }
 
 func getGroups(pg_conn *postgres.DB) [][]string {
@@ -74,10 +82,8 @@ func getGroups(pg_conn *postgres.DB) [][]string {
 	return groups_store
 }
 
-func insertUsers(respose string, row []string, pg_conn *postgres.DB)  {
-	res := vkResponse{}
-	json.Unmarshal([]byte(respose), &res)
-    	users := res.Response.Users
+func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres.DB)  {
+
 	group_id, _ := strconv.Atoi(row[1])
 	current_time := time.Now().Local()
 	for _, user := range users {
