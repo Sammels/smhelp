@@ -25,7 +25,7 @@ type vkResponse struct {
 func main() {
 	pg_conn := postgres.Init()
 	groups := getGroups(&pg_conn)
-	for len(groups) == 100 {
+	for len(groups) == 1000 {
 		groupsAnalysis(groups, &pg_conn)
 		groups = getGroups(&pg_conn)
 	}
@@ -33,6 +33,7 @@ func main() {
 }
 
 func groupsAnalysis(groups [][]string, pg_conn *postgres.DB) {
+	log.Println("Starting groups analis", len(groups))
 	params := make(map[string]string)
 	var api = &vk_api.Api{}
 	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
@@ -86,7 +87,6 @@ func insertUsers(respose string, row []string, pg_conn *postgres.DB)  {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
 		} else {
-			log.Println(user)
 			insertId = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
 				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
 				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
