@@ -9,6 +9,7 @@ import (
 	"time"
 	"os"
 	"fmt"
+	"log"
 )
 
 
@@ -39,13 +40,13 @@ func strAnswerToSlice(vkRespose string) []map[string]interface{} {
 func getMembers(row []string) []map[string]interface{} {
 	var api = &vk_api.Api{}
 	offset := 0
+	var usersKeeper []map[string]interface{}
 	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
 	params := make(map[string]string)
 	params["group_id"] = row[0]
 	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
 	strResp, _ := api.Request("groups.getMembers", params)
 	newUsersKeeper := strAnswerToSlice(strResp)
-	var usersKeeper = newUsersKeeper
 	for len(newUsersKeeper) >= 1000 {
 		usersKeeper = append(usersKeeper, newUsersKeeper...)
 		offset += 1
@@ -56,6 +57,7 @@ func getMembers(row []string) []map[string]interface{} {
 			usersKeeper = append(usersKeeper, newUsersKeeper...)
 		}
 	}
+	log.Println("Count of members: ", len(usersKeeper))
 	return usersKeeper
 }
 
