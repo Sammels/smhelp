@@ -20,8 +20,11 @@ class Command(BaseCommand):
                     for data_city in data_cities:
                         City.objects.get_or_create(country_id=counry.pk, name=data_city['title'], id=data_city['cid'])
                     if len(data_cities) == 1000:
-                        data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1,
+                        try:
+                            data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1,
                                                              offset=1000 * ctrying)
+                        except Exception:
+                            continue
                         ctrying += 1
 
                 for data_city in data_cities:
@@ -37,8 +40,11 @@ class Command(BaseCommand):
                 for data_city in data_cities:
                     City.objects.get_or_create(country_id=counry.pk, name=data_city['title'], id=data_city['cid'])
                 if len(data_cities) == 1000:
-                    data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1,
+                    try:
+                        data_cities = api.database.getCities(country_id=d['cid'], count=1000, need_all=1,
                                                          offset=1000 * ctrying)
+                    except Exception:
+                        continue
                     ctrying += 1
 
             for data_city in data_cities:
