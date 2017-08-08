@@ -78,6 +78,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     addGroupInput: HTMLInputElement;
     state: IAccountClassState;
     props: AccountRedux;
+    currentAction: string;
 
     constructor() {
         super();
@@ -112,6 +113,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         } else {
             this.noDataContent()
         }
+        this.currentAction = action;
     }
 
     noDataContent() {
@@ -291,7 +293,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         }
         this.setState({
             currentGroup: group_id
-        });
+        }, () => this.getGroupUsersInfo(this.currentAction));
+
     }
 
     render () {
