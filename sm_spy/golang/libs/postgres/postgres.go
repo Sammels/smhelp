@@ -12,24 +12,28 @@ type DB struct {
 	conn sql.DB
 }
 
-func (db *DB) Insert(sql_query string, args ...interface{}) int {
+type error interface {
+    Error() string
+}
+
+func (db *DB) Insert(sql_query string, args ...interface{}) (int, error) {
 	var buffer bytes.Buffer
 	lastInsertId := 0
 	buffer.WriteString(sql_query)
 	buffer.WriteString(" RETURNING id")
 	err := db.conn.QueryRow(buffer.String(), args...).Scan(&lastInsertId)
 	if err != nil {
-	  log.Fatal(err)
+	  return 0, error(err)
 	}
-	return lastInsertId
+	return lastInsertId, nil
 }
 
-func (db *DB) Execute(sql_query string, args ...interface{}) bool {
+func (db *DB) Execute(sql_query string, args ...interface{}) (bool, error) {
 	_, err := db.conn.Exec(sql_query, args...)
 	if err != nil {
-	  log.Fatal(err)
+	  return false, error(err)
 	}
-	return true
+	return true, nil
 }
 
 func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface{} {

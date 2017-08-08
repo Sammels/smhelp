@@ -118,7 +118,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     noDataContent() {
         this.setState({
-            'html_content': <p>Извините, данные не обнаружены</p>
+            'html_content': <p>Нет данных или идет загрузка</p>
         });
     }
 
@@ -212,6 +212,13 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         let total = 0;
         let slice_total = 0;
         const stop_index_slice = 4;
+        if(this.props.groupInfoGegraphy.length == 0) {
+            this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
+            this.setState({
+                'html_content': this.state.html_content
+            });
+            return;
+        }
         const data = this.props.groupInfoGegraphy
             .filter((obj) => {return obj.city_id})
             .sort((a, b) => {return b.count - a.count})
@@ -256,7 +263,10 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     memebersContent() {
         if (!this.props.groupInfo.length) {
-            this.state.html_content = <p>Извините, данные не обнаружены</p>;
+            this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
+            this.setState({
+                'html_content': this.state.html_content
+            });
             return;
         }
         const data = this.props.groupInfo.map((object, index) => {
@@ -305,7 +315,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             <div className="account-header">
                 <h3>Статистика</h3>
             </div>
-            <Sidebar getGroupUsersInfo={ (action) => this.getGroupUsersInfo(action) }/>
+            <Sidebar getGroupUsersInfo={ (action) => this.getGroupUsersInfo(action) }
+                     currentAction={ this.currentAction }/>
             <div id="content">
                 { this.state.html_content }
             </div>
