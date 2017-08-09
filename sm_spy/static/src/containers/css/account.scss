@@ -27,6 +27,11 @@ body {
     .recharts-legend-wrapper {
       margin: 0 -50px 0 0;
     }
+    h3 {
+      &.new_members {
+        text-align: center;
+      }
+    }
   }
   .third-menu {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);

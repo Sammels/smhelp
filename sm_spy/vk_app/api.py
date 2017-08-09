@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import generics
 from django.db.models import Count
 from rest_framework.permissions import IsAuthenticated
@@ -17,7 +19,34 @@ class GetOverviewUsers(generics.ListAPIView):
 
     def get_queryset(self):
         return PersonsGroups.objects.filter(
-            group=self.kwargs['group_id']).values('dt_checking').annotate(count=Count('*'))
+            group=self.kwargs['group_id']).values('dt_checking').annotate(count=Count('*')).order_by('dt_checking')
+
+
+class GetOverviewChanginsUsers(generics.ListAPIView):
+    permission_classes = (IsGroupOwner,)
+    serializer_class = GetGroupsIntersectionSerializator
+
+    def get_queryset(self):
+        group_id = self.kwargs['group_id']
+        prev_person_group = None
+        needs_date_string = self.request.GET.get('date')
+        needs_date = datetime.strptime(needs_date_string, '%Y-%m-%d')
+        dates = [date for date in PersonsGroups.objects.filter(group_id=group_id,
+                                                               dt_checking__lte=needs_date).distinct('dt_checking')]
+        current_person_group = dates[-1].dt_checking
+        try:
+            prev_person_group = dates[-2].dt_checking
+        except IndexError:
+            pass
+        current_persons_ids = set([person.pk for person in PersonsGroups.objects.filter(group_id=group_id,
+                                                                                        dt_checking=current_person_group)])
+        if prev_person_group is not None:
+            prev_persons_ids = set([person.pk for person in PersonsGroups.objects.filter(group_id=group_id,
+                                                                                         dt_checking=prev_person_group)])
+            persons_ids = current_persons_ids ^ prev_persons_ids
+        else:
+            persons_ids = current_persons_ids
+        return PersonGroup.objects.filter(id__in=persons_ids)
 
 
 class GetGroups(generics.ListAPIView):
