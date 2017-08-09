@@ -22,6 +22,10 @@ type vkResponse struct {
 	Response vkRresponseContent
 }
 
+type error interface {
+    Error() string
+}
+
 func main() {
 	pg_conn := postgres.Init()
 	for _, row := range getGroups(&pg_conn) {
@@ -89,15 +93,16 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 
 	group_id, _ := strconv.Atoi(row[1])
 	current_time := time.Now().Local()
-	log.Println("Starting insert", group_id)
+	log.Println("Starting insert", group_id, "Count", len(users))
 	for _, user := range users {
 		var insertId int
+		var err error
 		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["domain"])
 		if (len(data) > 0) {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
 		} else {
-			_, err := pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
+			insertId, err = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
 				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
 				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
 				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
@@ -112,12 +117,11 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 					 pg_conn.Insert("INSERT INTO vk_app_city (id, country_id, name)" +
 						" VALUES ($1, $2, $3)", user["city"], user["country"], "Unknow")
 				}
-				pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
+				insertId, _ = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
 				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
 				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
 				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			}
-
 		}
 		pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) " +
 			"VALUES ($1, $2, $3)", group_id, insertId,  current_time)

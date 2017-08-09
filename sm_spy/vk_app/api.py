@@ -38,11 +38,13 @@ class GetOverviewChanginsUsers(generics.ListAPIView):
             prev_person_group = dates[-2].dt_checking
         except IndexError:
             pass
-        current_persons_ids = set([person.pk for person in PersonsGroups.objects.filter(group_id=group_id,
-                                                                                        dt_checking=current_person_group)])
+        current_persons_ids = set([person[0] for person in
+                                   PersonsGroups.objects.filter(group_id=group_id,
+                                                                dt_checking=current_person_group).values_list('person')])
         if prev_person_group is not None:
-            prev_persons_ids = set([person.pk for person in PersonsGroups.objects.filter(group_id=group_id,
-                                                                                         dt_checking=prev_person_group)])
+            prev_persons_ids = set([person[0] for person in
+                                    PersonsGroups.objects.filter(group_id=group_id,
+                                                                 dt_checking=prev_person_group).values_list('person')])
             persons_ids = current_persons_ids ^ prev_persons_ids
         else:
             persons_ids = current_persons_ids
