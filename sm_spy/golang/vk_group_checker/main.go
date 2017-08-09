@@ -54,9 +54,9 @@ func getMembers(row []string) []map[string]interface{} {
 		params["offset"] = strconv.Itoa(offset*1000)
 		strResp, _ := api.Request("groups.getMembers", params)
 		newUsersKeeper = strAnswerToSlice(strResp)
-		if len(newUsersKeeper) < 1000 && len(newUsersKeeper) > 0 {
-			usersKeeper = append(usersKeeper, newUsersKeeper...)
-		}
+	}
+	if len(newUsersKeeper) < 1000 && len(newUsersKeeper) > 0 {
+		usersKeeper = append(usersKeeper, newUsersKeeper...)
 	}
 	log.Println("Count of members: ", len(usersKeeper))
 	return usersKeeper
