@@ -289,21 +289,32 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         </LineChart>);
 
         this.props.getGroupUsersInfoChanges(this.state.currentGroup, db_checking).then(() => {
-            console.log(this.props);
-            const group_data = this.props.groupInfoIntersection.map((object, index) => {
+
+            const group_data_in = this.props.groupInfoIntersection['data_in'].map((object, index) => {
+                return {'name': object.first_name + ' ' + object.last_name,
+                        //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
+                        'link': object.vk_id
+                }
+            });
+            const group_data_out = this.props.groupInfoIntersection['data_out'].map((object, index) => {
                 return {'name': object.first_name + ' ' + object.last_name,
                         //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
                         'link': object.vk_id
                 }
             });
 
-            const new_content = (<BootstrapTable data={group_data} striped={true} hover={true}>
+            const new_content_in = (<div><h3 className="new_members">Новые участники</h3><BootstrapTable data={group_data_in} striped={true} hover={true}>
               <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
               <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
-            </BootstrapTable>);
+            </BootstrapTable></div>);
+
+            const new_content_out = (<div><h3 className="new_members">Ушедшие участники</h3><BootstrapTable data={group_data_out} striped={true} hover={true}>
+              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
+              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+            </BootstrapTable></div>);
 
             this.setState({
-                'html_content': <div>{this.state.html_content}<h3 className="new_members">Новые участники</h3>{new_content}</div>
+                'html_content': <div>{this.state.html_content}{new_content_in}{new_content_out}</div>
             });
         });
     }

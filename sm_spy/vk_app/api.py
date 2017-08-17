@@ -5,6 +5,7 @@ from django.db.models import Count
 from rest_framework.permissions import IsAuthenticated
 import vk as vk_api
 from django.http import HttpResponseBadRequest
+from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
                                 GetGroupsIntersectionSerializator)
@@ -27,6 +28,7 @@ class GetOverviewChanginsUsers(generics.ListAPIView):
     serializer_class = GetGroupsIntersectionSerializator
 
     def get_queryset(self):
+        persons_ids_out = []
         group_id = self.kwargs['group_id']
         prev_person_group = None
         needs_date_string = self.request.GET.get('date')
@@ -45,10 +47,18 @@ class GetOverviewChanginsUsers(generics.ListAPIView):
             prev_persons_ids = set([person[0] for person in
                                     PersonsGroups.objects.filter(group_id=group_id,
                                                                  dt_checking=prev_person_group).values_list('person')])
-            persons_ids = current_persons_ids ^ prev_persons_ids
+            persons_ids_in = current_persons_ids - prev_persons_ids
+            persons_ids_out = prev_persons_ids - current_persons_ids
         else:
-            persons_ids = current_persons_ids
-        return PersonGroup.objects.filter(id__in=persons_ids)
+            persons_ids_in = current_persons_ids
+        return PersonGroup.objects.filter(id__in=persons_ids_in), PersonGroup.objects.filter(id__in=persons_ids_out)
+
+    def list(self, request, *args, **kwargs):
+        queryset_in, queryset_out = self.get_queryset()
+
+        serializer_in = self.get_serializer(queryset_in, many=True)
+        serializer_out = self.get_serializer(queryset_out, many=True)
+        return Response({'data_in': serializer_in.data, 'data_out': serializer_out.data})
 
 
 class GetGroups(generics.ListAPIView):
