@@ -38,3 +38,38 @@ class PersonsGroups(models.Model):
     group = models.ForeignKey(WatchingGroups)
     person = models.ForeignKey(PersonGroup)
     dt_checking = models.DateField()
+
+
+class LikesGroup(models.Model):
+    group = models.ForeignKey(WatchingGroups)
+    person = models.ForeignKey(PersonGroup)
+    dt_create = models.DateField(auto_now_add=True)
+
+
+class CommentsGroup(models.Model):
+    group = models.ForeignKey(WatchingGroups)
+    person = models.ForeignKey(PersonGroup)
+    dt_create = models.DateField(auto_now_add=True)
+    comment = models.TextField()
+
+
+class RepostGroup(models.Model):
+    group = models.ForeignKey(WatchingGroups)
+    person = models.ForeignKey(PersonGroup)
+    dt_create = models.DateField(auto_now_add=True)
+
+
+class PostGroup(models.Model):
+    vk_id = models.IntegerField()
+    group = models.ForeignKey(WatchingGroups)
+    dt_create = models.DateField(auto_now_add=True)
+    text = models.TextField()
+
+
+class PhotosPostGroup(models.Model):
+    post = models.ForeignKey(PostGroup)
+    dt_create = models.DateField(auto_now_add=True)
+    photo_1280 = models.CharField(max_length=255)
+    photo_807 = models.CharField(max_length=255)
+    photo_604 = models.CharField(max_length=255)
+
