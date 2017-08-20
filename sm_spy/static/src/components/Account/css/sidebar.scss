@@ -31,5 +31,12 @@
       }
       color: #457ea4;
     }
+    li {
+      &.active {
+        a {
+          color: #3F454B;
+        }
+      }
+    }
   }
 }

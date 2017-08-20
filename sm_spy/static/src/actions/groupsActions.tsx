@@ -9,6 +9,13 @@ export const getGroupUsersInfo = function (group_id: number): object {
     }
 }
 
+export const getGroupUsersInfoChanges = function (group_id: number, date: string): object {
+    return {
+        types: [constants.GET_GROUP_INTERSECTION, constants.GET_GROUP_INTERSECTION_SUCCESS, constants.GET_GROUP_INTERSECTION_FAIL],
+        promise: request.get('/vk/get_overview_changins_users/' + group_id + '/', {params: {date: date}})
+    }
+}
+
 export const getGroups = function (): object {
     return {
         types: [constants.GET_GROUPS, constants.GET_GROUPS_SUCCESS, constants.GET_GROUPS_FAIL],

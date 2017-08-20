@@ -236,7 +236,7 @@ CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     'vk_checker': {
-        'task': 'vk.celery.vk_checker',
+        'task': 'vk_app.celery.vk_checker',
         'schedule': crontab(minute=0, hour=23),
     },
     'proxy_parser': {

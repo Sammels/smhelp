@@ -2,15 +2,18 @@ import * as React from "react";
 import { connect } from 'react-redux';
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell } from 'recharts';
+
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
-import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection } from '../actions/groupsActions';
+import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection,
+         getGroupUsersInfoChanges } from '../actions/groupsActions';
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
 import {type} from 'os';
+
 
 interface addGroupData {
     name: string
@@ -71,6 +74,7 @@ interface DispatchFromProps {
     addGroup: (data: addGroupData) => Promise<any>;
     getGroupsGeography: (group_id: number) => Promise<any>;
     getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) => Promise<any>;
+    getGroupUsersInfoChanges: (group_id: number, date: string) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -129,7 +133,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     noDataContent() {
         this.setState({
-            'html_content': <p>Извините, данные не обнаружены</p>
+            'html_content': <p>Нет данных или идет загрузка</p>
         });
     }
 
@@ -232,6 +236,13 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         let total = 0;
         let slice_total = 0;
         const stop_index_slice = 4;
+        if(this.props.groupInfoGegraphy.length == 0) {
+            this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
+            this.setState({
+                'html_content': this.state.html_content
+            });
+            return;
+        }
         const data = this.props.groupInfoGegraphy
             .filter((obj) => {return obj.city_id})
             .sort((a, b) => {return b.count - a.count})
@@ -267,22 +278,28 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             <BootstrapTable data={data} striped={true} hover={true}>
               <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Город</TableHeaderColumn>
               <TableHeaderColumn dataField="value" dataAlign="center" dataSort={true}>Количество</TableHeaderColumn>
-          </BootstrapTable>
+            </BootstrapTable>
             </div>);
         this.setState({
             'html_content': this.state.html_content
         });
     }
 
-    memebersContent() {
-        if (!this.props.groupInfo.length) {
-            this.state.html_content = <p>Извините, данные не обнаружены</p>;
-            return;
+    membersChartsClick(e: any, group_data: groupInfoContainer) {
+        if (e === null) {
+            return false;
         }
+        const db_checking = e.activePayload[0].payload.name;
+        if (!db_checking || db_checking == group_data.dt_checking) {
+            return false;
+        }
+
         const data = this.props.groupInfo.map((object, index) => {
             return {'name': object.dt_checking, 'count': object.count}
         });
-        this.state.html_content = (<LineChart width={570} height={300} data={data}>
+
+        this.state.html_content = (<LineChart width={570} height={300} data={data}
+                                              onClick={(e) => this.membersChartsClick(e, this.props.groupInfo[0])}>
            <XAxis dataKey="name" padding={{left: 30, right: 30}}/>
            <YAxis/>
            <CartesianGrid strokeDasharray="3 3"/>
@@ -290,6 +307,60 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
            <Legend />
            <Line type="monotone" dataKey="count" stroke="#82ca9d" />
         </LineChart>);
+
+        this.props.getGroupUsersInfoChanges(this.state.currentGroup, db_checking).then(() => {
+
+            const group_data_in = this.props.groupInfoIntersection['data_in'].map((object, index) => {
+                return {'name': object.first_name + ' ' + object.last_name,
+                        //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
+                        'link': object.vk_id
+                }
+            });
+            const group_data_out = this.props.groupInfoIntersection['data_out'].map((object, index) => {
+                return {'name': object.first_name + ' ' + object.last_name,
+                        //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
+                        'link': object.vk_id
+                }
+            });
+
+            const new_content_in = (<div><h3 className="new_members">Новые участники</h3><BootstrapTable data={group_data_in} striped={true} hover={true}>
+              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
+              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+            </BootstrapTable></div>);
+
+            const new_content_out = (<div><h3 className="new_members">Ушедшие участники</h3><BootstrapTable data={group_data_out} striped={true} hover={true}>
+              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
+              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+            </BootstrapTable></div>);
+
+            this.setState({
+                'html_content': <div>{this.state.html_content}{new_content_in}{new_content_out}</div>
+            });
+        });
+    }
+
+    memebersContent() {
+        if (!this.props.groupInfo.length) {
+            this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
+            this.setState({
+                'html_content': this.state.html_content
+            });
+            return;
+        }
+        const data = this.props.groupInfo.map((object, index) => {
+            return {'name': object.dt_checking, 'count': object.count}
+        });
+        const tips = data.length > 1 ? <p>Кликните на точки, если хотите узнать кто именно пришел\ушел</p> : null;
+
+        this.state.html_content = (<div><LineChart width={570} height={300} data={data}
+                                              onClick={(e) => this.membersChartsClick(e, this.props.groupInfo[0])}>
+           <XAxis dataKey="name" padding={{left: 30, right: 30}}/>
+           <YAxis/>
+           <CartesianGrid strokeDasharray="3 3"/>
+           <Tooltip viewBox={{ 'x': 0, 'y': 0, 'width': 200, 'height': 150 }}/>
+           <Legend />
+           <Line type="monotone" dataKey="count" stroke="#82ca9d" />
+        </LineChart>{tips}</div>);
         this.setState({
             'html_content': this.state.html_content
         });
@@ -330,7 +401,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             <div className="account-header">
                 <h3>Статистика</h3>
             </div>
-            <Sidebar getGroupUsersInfo={ (action) => this.getGroupUsersInfo(action) }/>
+            <Sidebar getGroupUsersInfo={ (action) => this.getGroupUsersInfo(action) }
+                     currentAction={ this.currentAction }/>
             <div id="content">
                 { metaInfo }
                 { this.state.html_content }
@@ -372,6 +444,7 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     onGetGroupUsersInfo: (group_id: number) => dispatch(getGroupUsersInfo(group_id)),
+    getGroupUsersInfoChanges: (group_id: number, date: string) => dispatch(getGroupUsersInfoChanges(group_id, date)),
     getGroups: () => dispatch(getGroups()),
     addGroup: (data: addGroupData) => dispatch(addGroup(data)),
     getGroupsGeography: (group_id: number) => dispatch(getGroupsGeography(group_id)),
