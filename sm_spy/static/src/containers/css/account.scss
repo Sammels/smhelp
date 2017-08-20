@@ -106,5 +106,10 @@ body {
 }
 
 #content {
-    padding: 20px 10px 20px 10px;
+  min-height: 400px;
+  padding: 37px 10px 20px 10px;
+  #title-link {
+    margin: -27px 0 0 0;
+    position: absolute;
+  }
 }

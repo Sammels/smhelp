@@ -35,10 +35,20 @@ export const addGroup = function (data: any) {
     }
 }
 
-export const getGroupsIntersection = function (first_group_id: number, second_group_id: number) {
+export const getGroupsIntersection = function (first_group_id: number, groups: any) {
+    var params = new URLSearchParams();
+    for (let key in groups) {
+            for (let key_group in groups[key]) {
+                if (key_group != 'value') {
+                    continue
+                }
+                params.append(key_group + '[]', groups[key][key_group]);
+            }
+
+    }
     return {
         types: [constants.GET_GROUP_INTERSECTION, constants.GET_GROUP_INTERSECTION_SUCCESS, constants.GET_GROUP_INTERSECTION_FAIL],
-        promise: request.get('/vk/get_group_intersection/' + first_group_id + '/' + second_group_id + '/')
+        promise: request.get('/vk/get_group_intersection/' + first_group_id + '/', {params: params})
     }
 
 }

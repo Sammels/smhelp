@@ -10,6 +10,7 @@ import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIn
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
+import {type} from 'os';
 
 interface addGroupData {
     name: string
@@ -22,6 +23,7 @@ interface selectValue {
 
 interface groupContainer{
     name: string,
+    link: string,
     id: number
 }
 
@@ -40,7 +42,8 @@ interface IAccountClassState {
     isShowAddForm: boolean,
     currentGroup: number,
     crossGroup: number,
-    html_content: object
+    html_content: object,
+    inersectionValue: Array<selectValue>
 }
 
 interface groupGeagraphyContainer {
@@ -67,7 +70,7 @@ interface DispatchFromProps {
     getGroups: () => Promise<any>;
     addGroup: (data: addGroupData) => Promise<any>;
     getGroupsGeography: (group_id: number) => Promise<any>;
-    getGroupsIntersection: (first_group_id: number, second_group_id: number) => Promise<any>;
+    getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -86,7 +89,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             isShowAddForm: false,
             currentGroup: 0,
             html_content: <p>Выберите категорию</p>,
-            crossGroup: 0
+            crossGroup: 0,
+            inersectionValue: []
         }
         this.addGroupInput = null;
     }
@@ -99,6 +103,13 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                 });
             }
         });
+    }
+
+    getGroupProperties() {
+        if ((!this.props.groupsList.length) || (this.props.groupsList.length && this.props.groupsList[0] == undefined)) {
+            return null
+        }
+        return this.props.groupsList.filter((group_object) => { return this.state.currentGroup ==  group_object.id })[0]
     }
 
     getGroupUsersInfo(action: string) {
@@ -122,9 +133,17 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
-    changingSelect(object_value: selectValue) {
-        this.props.getGroupsIntersection(this.state.currentGroup, object_value.value).then(
-             () => { this.groupsIntersectionContentSecondStep() } )
+    changingSelect(object_value: any) {
+        if (!Array.isArray(object_value)) {
+            object_value = [object_value];
+        }
+        this.setState({
+            inersectionValue: object_value
+        });
+        this.props.getGroupsIntersection(this.state.currentGroup, object_value).then(
+             () => {
+                 this.groupsIntersectionContentSecondStep();
+             } )
     }
 
     groupsIntersectionContentSecondStep() {
@@ -172,7 +191,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         const content = (<div>
             <Select
               name="groups_inersection"
-              value=""
+              value={this.state.inersectionValue}
+              multi={true}
               options={ options }
               onChange={(object_value: selectValue) => this.changingSelect(object_value)}
             />
@@ -299,14 +319,20 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     render () {
         const self = this;
+        let metaInfo = null;
         const { groupInfo } = this.props;
         const gloupsList = Object.keys(this.props.groupsList).length ? this.props.groupsList : null;
+        const currentGroupInfo = this.getGroupProperties();
+        if (currentGroupInfo) {
+            metaInfo = (<a href={ currentGroupInfo.link } target="_blank" id="title-link">{ currentGroupInfo.name }</a>)
+        }
         return <div className="account-wrapper">
             <div className="account-header">
                 <h3>Статистика</h3>
             </div>
             <Sidebar getGroupUsersInfo={ (action) => this.getGroupUsersInfo(action) }/>
             <div id="content">
+                { metaInfo }
                 { this.state.html_content }
             </div>
             <div className="third-menu">
@@ -349,7 +375,7 @@ const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     getGroups: () => dispatch(getGroups()),
     addGroup: (data: addGroupData) => dispatch(addGroup(data)),
     getGroupsGeography: (group_id: number) => dispatch(getGroupsGeography(group_id)),
-    getGroupsIntersection: (first_group_id: number, second_group_id: number) =>
+    getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) =>
         dispatch(getGroupsIntersection(first_group_id, second_group_id))
 });
 

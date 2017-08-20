@@ -69,11 +69,16 @@ class GetGroupsIntersection(generics.ListAPIView):
     serializer_class = GetGroupsIntersectionSerializator
 
     def get_queryset(self):
-        group_first = PersonsGroups.objects.filter(group_id=self.kwargs['first_group']).values_list('person_id')
-        group_second = PersonsGroups.objects.filter(group_id=self.kwargs['second_group']).values_list('person_id')
-        group_first = set([member_id[0] for member_id in group_first])
-        group_second = set([member_id[0] for member_id in group_second])
-        intersection = group_first & group_second
+        values = self.request.GET.getlist('value[]')
+        if not values:
+            return self.queryset
+
+        group = PersonsGroups.objects.filter(group_id=self.kwargs['first_group']).values_list('person_id')
+        intersection = set([member_id[0] for member_id in group])
+        for value in values:
+            group = PersonsGroups.objects.filter(group_id=value).values_list('person_id')
+            set_group = set([member_id[0] for member_id in group])
+            intersection = intersection & set_group
         if not intersection:
             return self.queryset
         return PersonGroup.objects.filter(id__in=intersection)
