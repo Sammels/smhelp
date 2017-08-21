@@ -2,6 +2,7 @@ from datetime import datetime
 
 from rest_framework import generics
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 import vk as vk_api
 from django.http import HttpResponseBadRequest
@@ -67,6 +68,24 @@ class GetGroups(generics.ListAPIView):
 
     def get_queryset(self):
         return WatchingGroups.objects.filter(watchers=self.request.user.pk)
+
+
+class GroupsForceUpdate(generics.CreateAPIView, GetGroups):
+    permission_classes = (IsGroupOwner, )
+
+    def post(self, request, *args, **kwargs):
+        group = get_object_or_404(WatchingGroups, pk=kwargs['group_id'])
+        group.force_update()
+        return self.list(request, *args, **kwargs)
+
+class GroupsDelete(generics.DestroyAPIView, GetGroups):
+    permission_classes = (IsGroupOwner, )
+
+    def delete(self, request, *args, **kwargs):
+        group = get_object_or_404(WatchingGroups, pk=kwargs['group_id'], watchers=request.user)
+        group.watchers.remove(request.user)
+        return self.list(request, *args, **kwargs)
+
 
 
 class AddGroup(generics.CreateAPIView, generics.ListAPIView):

@@ -1,18 +1,17 @@
 import * as React from "react";
 import { connect } from 'react-redux';
-
+import {Icon} from 'react-fa'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell } from 'recharts';
 
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
-import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection,
+import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
          getGroupUsersInfoChanges } from '../actions/groupsActions';
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
-import {type} from 'os';
 
 
 interface addGroupData {
@@ -75,6 +74,8 @@ interface DispatchFromProps {
     getGroupsGeography: (group_id: number) => Promise<any>;
     getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) => Promise<any>;
     getGroupUsersInfoChanges: (group_id: number, date: string) => Promise<any>;
+    forceUpdate: (group_id: number) => Promise<any>;
+    deleteGroup: (group_id: number) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -388,14 +389,27 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     }
 
+    deleteGroup(group_id: number) {
+        this.props.deleteGroup(group_id);
+    }
+
+    forceUpdate() {
+        this.props.forceUpdate(this.state.currentGroup);
+    }
+
     render () {
         const self = this;
-        let metaInfo = null;
+        let metaInfo = <div/>;
         const { groupInfo } = this.props;
         const gloupsList = Object.keys(this.props.groupsList).length ? this.props.groupsList : null;
         const currentGroupInfo = this.getGroupProperties();
         if (currentGroupInfo) {
-            metaInfo = (<a href={ currentGroupInfo.link } target="_blank" id="title-link">{ currentGroupInfo.name }</a>)
+            metaInfo = (
+                <div id="content-header">
+                    <a href={ currentGroupInfo.link } target="_blank" id="title-link">{ currentGroupInfo.name }</a>
+                    <Icon name="refresh" className="update-icon" title="Обновить данные" onClick={() => this.forceUpdate() }/>
+                </div>
+            )
         }
         return <div className="account-wrapper">
             <div className="account-header">
@@ -411,13 +425,16 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                 <h3>Мои группы:</h3>
                 <div className="third-menu-content">
                     {gloupsList ? (gloupsList.map((objects: groupContainer, index: number) => {
-                        return <a href="javascript:void(0)"
+                        return (<div className="block-group-delete">
+                            <Icon name="trash" className="group-delete" title="Удалить из наблюдения"
+                                  onClick={ () => this.deleteGroup(objects.id)  }/>
+                            <a href="javascript:void(0)"
                                   key={ index }
                                   onClick={ () => this.switchCurrentGroup(objects.id)  }
                                   className={ (objects.id === self.state.currentGroup) ? 'active' : '' }
                                 >
                             { objects['name'] }
-                            </a>
+                            </a></div>);
                     })) :
                         <p>Группы не найдены</p>
                     }
@@ -449,7 +466,9 @@ const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     addGroup: (data: addGroupData) => dispatch(addGroup(data)),
     getGroupsGeography: (group_id: number) => dispatch(getGroupsGeography(group_id)),
     getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) =>
-        dispatch(getGroupsIntersection(first_group_id, second_group_id))
+        dispatch(getGroupsIntersection(first_group_id, second_group_id)),
+    forceUpdate: (group_id: number) => dispatch(forceUpdate(group_id)),
+    deleteGroup: (group_id: number) => dispatch(deleteGroup(group_id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

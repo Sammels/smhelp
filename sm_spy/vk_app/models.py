@@ -1,5 +1,9 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import User
+
+from vk_app.celery import vk_checker
 
 
 class Country(models.Model):
@@ -19,6 +23,15 @@ class WatchingGroups(models.Model):
     watchers = models.ManyToManyField(User)
     dt_create = models.DateTimeField(auto_now_add=True, blank=True)
     dt_last_update = models.DateField(null=True, default=None)
+
+    def force_update(self):
+        if self.dt_last_update is not None:
+            self.dt_last_update = self.dt_last_update - timedelta(days=1)
+            dt_last_update = self.dt_last_update
+            self.save()
+            persons = PersonsGroups.objects.filter(group=self, dt_checking__gte=dt_last_update)
+            persons.delete()
+        vk_checker.delay(self.pk)
 
 
 class PersonGroup(models.Model):

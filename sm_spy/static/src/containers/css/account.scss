@@ -15,9 +15,20 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   #content {
+    min-height: 400px;
+    padding: 37px 10px 20px 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     background: #fff;
     width: 600px;
+
+    #content-header {
+      display: flex;
+      margin: -27px 0 20px 0;
+      justify-content: space-between;
+      .update-icon {
+        cursor: pointer;
+      }
+    }
 
     .center-pie {
       width: 410px;
@@ -48,14 +59,22 @@ body {
     }
     .third-menu-content {
       padding: 10px 20px 10px 24px;
-      a {
-        &.active {
-          color: #235270;
+      .block-group-delete {
+        display: flex;
+        justify-content: flex-start;
+        .group-delete {
+          cursor: pointer;
+            margin: 2px 8px 0 0;
         }
-        display: block;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        a {
+          &.active {
+            color: #235270;
+          }
+          display: block;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
     }
     button {
@@ -107,14 +126,5 @@ body {
         margin: 0 0 0 4px;
       }
     }
-  }
-}
-
-#content {
-  min-height: 400px;
-  padding: 37px 10px 20px 10px;
-  #title-link {
-    margin: -27px 0 0 0;
-    position: absolute;
   }
 }

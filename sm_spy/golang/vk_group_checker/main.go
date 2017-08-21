@@ -78,6 +78,7 @@ func getGroups(pg_conn *postgres.DB) [][]string {
 		groupId_int, _ := strconv.Atoi(groupId)
 		sql_query = fmt.Sprintf("%s AND id = %d", sql_query, groupId_int)
 	}
+	log.Println("sql_query", sql_query)
 	groups := pg_conn.Find(sql_query)
 	for _, group := range groups {
 		group_split := strings.Split(group["link"].(string), "/")

@@ -59,3 +59,17 @@ export const getGroupsIntersection = function (first_group_id: number, groups: a
     }
 
 }
+
+export const forceUpdate = function (group_id: number) {
+    return {
+        types: [constants.GET_GROUPS, constants.GET_GROUPS_SUCCESS, constants.GET_GROUPS_FAIL],
+        promise: request.post('/vk/groups/force_update/' + group_id + '/')
+    }
+}
+
+export const deleteGroup = function (group_id: number) {
+    return {
+        types: [constants.GET_GROUPS, constants.GET_GROUPS_SUCCESS, constants.GET_GROUPS_FAIL],
+        promise: request.delete('/vk/groups/delete/' + group_id + '/')
+    }
+}
