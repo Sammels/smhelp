@@ -28,8 +28,10 @@ type error interface {
 
 func main() {
 	pg_conn := postgres.Init()
+	var memberOfGroup []map[string]interface{}
 	for _, row := range getGroups(&pg_conn) {
-		memberOfGroup := getMembers(row)
+		memberOfGroup = getMembers(row)
+		log.Println("Count of members second: ", len(memberOfGroup))
 		insertUsers(memberOfGroup, row, &pg_conn)
 	}
 }

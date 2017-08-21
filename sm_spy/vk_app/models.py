@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -25,7 +25,7 @@ class WatchingGroups(models.Model):
     dt_last_update = models.DateField(null=True, default=None)
 
     def force_update(self):
-        if self.dt_last_update is not None:
+        if self.dt_last_update is not None and self.dt_last_update.date() == datetime.today().date():
             self.dt_last_update = self.dt_last_update - timedelta(days=1)
             dt_last_update = self.dt_last_update
             self.save()
