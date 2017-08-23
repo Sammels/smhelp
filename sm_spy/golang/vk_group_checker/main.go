@@ -13,41 +13,65 @@ import (
 )
 
 
-type vkRresponseContent struct {
+type vkRresponseContentUsers struct {
 	Count int
 	Users []map[string]interface{}
 }
 
-type vkResponse struct {
-	Response vkRresponseContent
+type vkResponseUsers struct {
+	Response vkRresponseContentUsers
+}
+
+type vkResponseWallItem struct {
+	id int `json:"id"`
+	from_id int `json:"from_id"`
+	owner_id int `json:"owner_id"`
+	date int `json:"date"`
+	marked_as_ads int `json:"marked_as_ads"`
+	post_type string `json:"post_type"`
+	text string `json:"string"`
+	attachments []string `json:"attachments"`
+	post_source map[string]string `json:"post_source"`
+	comments map[string]int `json:"comments"`
+	likes map[string]int `json:"likes"`
+	reposts map[string]int `json:"reposts"`
 }
 
 type error interface {
     Error() string
 }
 
+
 func main() {
 	pg_conn := postgres.Init()
-	var memberOfGroup []map[string]interface{}
+	//var memberOfGroup []map[string]interface{}
 	for _, row := range getGroups(&pg_conn) {
-		memberOfGroup = getMembers(row)
-		log.Println("Count of members second: ", len(memberOfGroup))
-		insertUsers(memberOfGroup, row, &pg_conn)
+		//memberOfGroup = getMembers(row)
+		//log.Println("Count of members second: ", len(memberOfGroup))
+		//insertUsers(memberOfGroup, row, &pg_conn)
+		wallWorking(row)
+		break
 	}
 }
 
 func strAnswerToSlice(vkRespose string) []map[string]interface{} {
-	res := vkResponse{}
+	res := vkResponseUsers{}
 	json.Unmarshal([]byte(vkRespose), &res)
     	users := res.Response.Users
 	return users
 }
 
+func getVkApi() vk_api.Api {
+	var api = vk_api.Api{}
+	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
+	return api
+}
+
 func getMembers(row []string) []map[string]interface{} {
-	var api = &vk_api.Api{}
+
 	offset := 0
 	var usersKeeper []map[string]interface{}
-	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
+	api := getVkApi()
 	params := make(map[string]string)
 	params["group_id"] = row[0]
 	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
@@ -131,5 +155,24 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 	}
 	log.Println("Finish task", group_id)
 	pg_conn.Execute("UPDATE vk_app_watchinggroups SET dt_last_update=NOW() WHERE id = $1", group_id)
+}
+
+func wallWorking(row []string) {
+	api := getVkApi()
+	api.SetDebug(true)
+	params := make(map[string]string)
+	res := map[string][]interface{}{"d": vkResponseWallItem{}}
+	//var res interface{}
+
+	params["domain"] = row[0]
+	params["count"] = "1"
+	strResp, _ := api.Request("wall.get", params)
+
+	json.Unmarshal([]byte(strResp), &res)
+	log.Println(res["response"])
+	//for _, vk_item := range(res.Response) {
+	//	//log.Println(vk_item["text"], vk_item["date"], vk_item["id"])
+	//	log.Println(vk_item)
+	//}
 }
 
