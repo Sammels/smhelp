@@ -242,6 +242,10 @@ CELERYBEAT_SCHEDULE = {
     'proxy_parser': {
         'task': 'twitch.celery.proxy_parser',
         'schedule': crontab(minute='*/10'),
+    },
+    'vk_online_checker': {
+        'task': 'vk_app.celery.vk_online_checker',
+        'schedule': crontab(minute='*/15'),
     }
 }
 CELERY_TIMEZONE = 'UTC'

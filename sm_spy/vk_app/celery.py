@@ -16,3 +16,12 @@ def vk_checker(group_id=None):
     if group_id:
         command += [str(group_id)]
     subprocess.Popen(command)
+
+
+@shared_task()
+def vk_online_checker(group_id=None):
+    logger.info("vk_online_checker is stated")
+    command = ['{}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_online_checker.so'))]
+    if group_id:
+        command += [str(group_id)]
+    subprocess.Popen(command)

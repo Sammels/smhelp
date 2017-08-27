@@ -47,6 +47,11 @@ class PersonGroup(models.Model):
     bdate = models.CharField(max_length=255, null=True)
 
 
+class PersonOnline(models.Model):
+    dt_online = models.DateTimeField()
+    person = models.ForeignKey(PersonGroup)
+
+
 class PersonsGroups(models.Model):
     group = models.ForeignKey(WatchingGroups)
     person = models.ForeignKey(PersonGroup)
