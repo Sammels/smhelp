@@ -43,7 +43,8 @@ func main() {
 		isOnline, _ := isOnline(strResp)
 		if isOnline != 0 {
 			log.Println("User ", params["user_ids"], " is online")
-			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id) VALUES (NOW(), $1)"
+			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id, is_watching) " +
+				"VALUES (NOW(), $1, true)"
 			_, err = pg_conn.Insert(slq_insert, person["id"])
 			if err != nil {
 				log.Println(err)
