@@ -73,3 +73,11 @@ export const deleteGroup = function (group_id: number) {
         promise: request.delete('/vk/groups/delete/' + group_id + '/')
     }
 }
+
+export const getOnlinePeople = function (group_id: number): object {
+    return {
+        types: [constants.GET_GROUP_PEOPLE_ONLINE, constants.GET_GROUP_PEOPLE_ONLINE_SUCCESS,
+                constants.GET_GROUP_PEOPLE_ONLINE_FAIL],
+        promise: request.get('/vk/group/' + group_id + '/online/')
+    }
+}

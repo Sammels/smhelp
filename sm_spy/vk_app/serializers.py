@@ -21,6 +21,21 @@ class GetOverviewUsersSerializer(serializers.ModelSerializer):
         return obj['count']
 
 
+class PeopleOnlineSerializator(serializers.ModelSerializer):
+    hour_online = serializers.SerializerMethodField()
+    count_person = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PersonGroup
+        fields = ('hour_online', 'count_person')
+
+    def get_hour_online(self, obj):
+        return obj['hour_online']
+
+    def get_count_person(self, obj):
+        return obj['count_person']
+
+
 class GetGroupsGeographySerializator(serializers.ModelSerializer):
     count = serializers.SerializerMethodField()
     city_name = serializers.SerializerMethodField()

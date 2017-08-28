@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from rest_framework import generics
-from django.db.models import Count
+from django.db.models import Count, DateTimeField
+from django.db.models.functions import Trunc, Extract
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 import vk as vk_api
@@ -9,8 +10,8 @@ from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
-                                GetGroupsIntersectionSerializator)
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
+                                GetGroupsIntersectionSerializator, PeopleOnlineSerializator)
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline
 from vk_app.permissions import IsGroupOwner
 from vk_app.celery import vk_checker
 
@@ -123,6 +124,21 @@ class GetGeographyMembers(generics.ListAPIView):
         members = PersonsGroups.objects.filter(group_id=self.kwargs['pk']).values_list('person_id')
         queryset = PersonGroup.objects.values('city_id', 'city__name').filter(id__in=members).annotate(count=Count('*'))
         return queryset
+
+
+class GetPeopleOnline(generics.ListAPIView):
+    permission_classes = (IsGroupOwner, )
+    serializer_class = PeopleOnlineSerializator
+
+    def get_queryset(self):
+        members = PersonsGroups.objects.filter(group_id=self.kwargs['group_id']).values_list('person_id')
+        queryset = PersonOnline.objects.values('is_watching').annotate(
+            count_person=Count('person_id')).annotate(
+            hour_online=Extract('dt_online', 'hour')).filter(
+            is_watching=True, person__in=members).values('count_person', 'hour_online').order_by('hour_online')
+
+        return queryset
+
 
 class GetGroupsIntersection(generics.ListAPIView):
     permission_classes = (IsAuthenticated, )

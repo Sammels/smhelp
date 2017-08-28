@@ -50,6 +50,7 @@ class PersonGroup(models.Model):
 class PersonOnline(models.Model):
     dt_online = models.DateTimeField()
     person = models.ForeignKey(PersonGroup)
+    is_watching = models.BooleanField(default=True)
 
 
 class PersonsGroups(models.Model):

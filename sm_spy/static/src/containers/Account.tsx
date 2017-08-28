@@ -1,14 +1,14 @@
 import * as React from "react";
 import { connect } from 'react-redux';
 import {Icon} from 'react-fa'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Sector, Cell, BarChart, Bar } from 'recharts';
 
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
-         getGroupUsersInfoChanges } from '../actions/groupsActions';
+         getGroupUsersInfoChanges, getOnlinePeople } from '../actions/groupsActions';
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
@@ -60,11 +60,17 @@ interface groupIntersectionContainer {
     vk_id: string
 }
 
+interface groupPeopleOnlineContainer {
+    hour_online: number,
+    count_person: number
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
     groupInfoGegraphy: Array<groupGeagraphyContainer>
     groupInfoIntersection: Array<groupIntersectionContainer>
+    groupPeopleOnline: Array<groupPeopleOnlineContainer>
 }
 
 interface DispatchFromProps {
@@ -76,6 +82,7 @@ interface DispatchFromProps {
     getGroupUsersInfoChanges: (group_id: number, date: string) => Promise<any>;
     forceUpdate: (group_id: number) => Promise<any>;
     deleteGroup: (group_id: number) => Promise<any>;
+    getOnlinePeople: (group_id: number) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -126,6 +133,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             this.props.getGroupsGeography(this.state.currentGroup).then( () => { this.geographyContent() } )
         } else if (action == 'cross_groups') {
             this.groupsIntersectionContent()
+        } else if (action == 'active_members') {
+            this.props.getOnlinePeople(this.state.currentGroup).then( () => { this.activeMembersContent() } )
         } else {
             this.noDataContent()
         }
@@ -205,6 +214,25 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         </div>);
         this.setState({
             'html_content': content
+        });
+    }
+
+    activeMembersContent() {
+        const data = this.props.groupPeopleOnline.map((object, index) => {
+            return {"name": object.hour_online + ' час (а, ов)', "count_person": object.count_person }
+        });
+        this.state.html_content = (
+            <BarChart width={600} height={300} data={data}
+                margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+           <XAxis dataKey="name"/>
+           <YAxis/>
+           <CartesianGrid strokeDasharray="3 3"/>
+           <Tooltip/>
+           <Legend />
+           <Bar dataKey="count_person" fill="#8884d8" />
+          </BarChart>);
+        this.setState({
+            'html_content': this.state.html_content
         });
     }
 
@@ -425,7 +453,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                 <h3>Мои группы:</h3>
                 <div className="third-menu-content">
                     {gloupsList ? (gloupsList.map((objects: groupContainer, index: number) => {
-                        return (<div className="block-group-delete">
+                        return (<div className="block-group-delete" key={index}>
                             <Icon name="trash" className="group-delete" title="Удалить из наблюдения"
                                   onClick={ () => this.deleteGroup(objects.id)  }/>
                             <a href="javascript:void(0)"
@@ -456,7 +484,8 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupsList: state.groupsReducer.groups,
     groupInfo: state.groupsReducer.groupInfo,
     groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
-    groupInfoIntersection: state.groupsReducer.groupIntersection
+    groupInfoIntersection: state.groupsReducer.groupIntersection,
+    groupPeopleOnline: state.groupsReducer.groupPeopleOnline
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
@@ -469,6 +498,7 @@ const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
         dispatch(getGroupsIntersection(first_group_id, second_group_id)),
     forceUpdate: (group_id: number) => dispatch(forceUpdate(group_id)),
     deleteGroup: (group_id: number) => dispatch(deleteGroup(group_id)),
+    getOnlinePeople: (group_id: number) => dispatch(getOnlinePeople(group_id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);
