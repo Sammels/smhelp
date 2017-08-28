@@ -217,11 +217,11 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
-    getTimeZoneHour(hour: number) {
+    getTimeZoneHour(hour: string) {
         // TODO: If offset less then 0, problems can appear
         const dateNow = new Date();
         const timeZoneOffset = (dateNow.getTimezoneOffset()*-1)/6;
-        let newHour = (timeZoneOffset + hour);
+        let newHour = (timeZoneOffset + parseInt(hour));
         if (newHour >= 24) {
             newHour = newHour - 24;
         }
@@ -239,7 +239,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
 
         const data = this.props.groupPeopleOnline.map((object, index) => {
-            return {"name": this.getTimeZoneHour(parseInt(object.hour_online)) + ' час (а, ов)', "Количество online": object.count_person }
+            return {"name": this.getTimeZoneHour(object.hour_online) + ' час (а, ов)', "Количество online": object.count_person }
         });
         this.state.html_content = (
             <BarChart width={570} height={300} data={data}>
