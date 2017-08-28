@@ -57,5 +57,8 @@ func main() {
 func isOnline(strResp string) (int,int) {
 	res := VkResponse{}
 	json.Unmarshal([]byte(strResp), &res)
+	if len(res.Response) < 1 {
+		return 0, 0
+	}
 	return res.Response[0].Online, res.Response[0].Id
 }
