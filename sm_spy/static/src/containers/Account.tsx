@@ -218,18 +218,24 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     activeMembersContent() {
+        if (!this.props.groupPeopleOnline.length) {
+            this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
+            this.setState({
+                'html_content': this.state.html_content
+            });
+            return;
+        }
         const data = this.props.groupPeopleOnline.map((object, index) => {
-            return {"name": object.hour_online + ' час (а, ов)', "count_person": object.count_person }
+            return {"name": object.hour_online + ' час (а, ов)', "Количество online": object.count_person }
         });
         this.state.html_content = (
-            <BarChart width={600} height={300} data={data}
-                margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+            <BarChart width={570} height={300} data={data}>
            <XAxis dataKey="name"/>
            <YAxis/>
            <CartesianGrid strokeDasharray="3 3"/>
            <Tooltip/>
            <Legend />
-           <Bar dataKey="count_person" fill="#8884d8" />
+           <Bar dataKey="Количество online" fill="#8884d8" />
           </BarChart>);
         this.setState({
             'html_content': this.state.html_content
