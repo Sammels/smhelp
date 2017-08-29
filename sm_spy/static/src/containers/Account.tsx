@@ -61,7 +61,7 @@ interface groupIntersectionContainer {
 }
 
 interface groupPeopleOnlineContainer {
-    hour_online: string,
+    hour_online: number,
     count_person: number
 }
 
@@ -217,11 +217,11 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
-    getTimeZoneHour(hour: string) {
+    getTimeZoneHour(hour: number) {
         // TODO: If offset less then 0, problems can appear
         const dateNow = new Date();
-        const timeZoneOffset = (dateNow.getTimezoneOffset()*-1)/6;
-        let newHour = (timeZoneOffset + parseInt(hour));
+        const timeZoneOffset = (dateNow.getTimezoneOffset()*-1)/60;
+        let newHour = (timeZoneOffset + hour);
         if (newHour >= 24) {
             newHour = newHour - 24;
         }
