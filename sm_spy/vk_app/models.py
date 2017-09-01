@@ -25,7 +25,7 @@ class WatchingGroups(models.Model):
     dt_last_update = models.DateField(null=True, default=None)
 
     def force_update(self):
-        if self.dt_last_update is not None and self.dt_last_update.date() == datetime.today().date():
+        if self.dt_last_update is not None and self.dt_last_update == datetime.today().date():
             self.dt_last_update = self.dt_last_update - timedelta(days=1)
             dt_last_update = self.dt_last_update
             self.save()

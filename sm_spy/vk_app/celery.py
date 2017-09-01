@@ -16,6 +16,7 @@ def vk_checker(group_id=None):
     if group_id:
         command += [str(group_id)]
     subprocess.Popen(command)
+    logger.info("vk_checker is ended")
 
 
 @shared_task()
@@ -25,3 +26,4 @@ def vk_online_checker(group_id=None):
     if group_id:
         command += [str(group_id)]
     subprocess.Popen(command)
+    logger.info("vk_online_checker is ended")

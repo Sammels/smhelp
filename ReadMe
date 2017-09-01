@@ -6,7 +6,7 @@ Commands for building Go library:
 
 For running celery listener:
 
-    python manage.py celery -A sm_spy worker -l info
+    python manage.py celery -A sm_spy worker -l info --concurrency=1
     python manage.py celery -A sm_spy beat -l info
 
 For working you need to install:

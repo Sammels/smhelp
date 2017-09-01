@@ -9,6 +9,7 @@ const Select = require('react-select');
 import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
          getGroupUsersInfoChanges, getOnlinePeople } from '../actions/groupsActions';
+import Modal from "../components/Modal";
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
@@ -45,7 +46,8 @@ interface IAccountClassState {
     currentGroup: number,
     crossGroup: number,
     html_content: object,
-    inersectionValue: Array<selectValue>
+    inersectionValue: Array<selectValue>,
+    showMessage: boolean
 }
 
 interface groupGeagraphyContainer {
@@ -65,12 +67,17 @@ interface groupPeopleOnlineContainer {
     count_person: number
 }
 
+interface groupError {
+    error: string
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
-    groupInfoGegraphy: Array<groupGeagraphyContainer>
-    groupInfoIntersection: Array<groupIntersectionContainer>
-    groupPeopleOnline: Array<groupPeopleOnlineContainer>
+    groupInfoGegraphy: Array<groupGeagraphyContainer>,
+    groupInfoIntersection: Array<groupIntersectionContainer>,
+    groupPeopleOnline: Array<groupPeopleOnlineContainer>,
+    groupsError: groupError,
 }
 
 interface DispatchFromProps {
@@ -94,6 +101,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     state: IAccountClassState;
     props: AccountRedux;
     currentAction: string;
+    currentModalMessage: string;
 
     constructor() {
         super();
@@ -102,9 +110,11 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             currentGroup: 0,
             html_content: <p>Выберите категорию</p>,
             crossGroup: 0,
-            inersectionValue: []
+            inersectionValue: [],
+            showMessage: false
         }
         this.addGroupInput = null;
+        this.currentModalMessage = '';
     }
 
     componentDidMount() {
@@ -423,7 +433,15 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     addGroup() {
         this.props.addGroup({
             'name': this.addGroupInput.value
-        })
+        }).then(() => {
+            if (this.props.groupsError.error) {
+                this.currentModalMessage = 'Первышен лимит участников';
+                this.setState({
+                    'showMessage': true
+                })
+            }
+
+        });
     }
 
     switchCurrentGroup(group_id: number) {
@@ -441,7 +459,20 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     forceUpdate() {
-        this.props.forceUpdate(this.state.currentGroup);
+        this.props.forceUpdate(this.state.currentGroup).then(() => {
+            this.currentModalMessage = 'Обновления запущено. Дождитесь обвноления';
+            this.setState({
+                'showMessage': true
+            })
+        });
+    }
+
+    showMessage() {
+        const self = this;
+        setTimeout(function() {self.setState({
+            showMessage: false
+        })}, 2000);
+        return <Modal message={this.currentModalMessage} />
     }
 
     render () {
@@ -459,6 +490,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             )
         }
         return <div className="account-wrapper">
+            {this.state.showMessage ? this.showMessage() : ''}
             <div className="account-header">
                 <h3>Статистика</h3>
             </div>
@@ -502,6 +534,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupsList: state.groupsReducer.groups,
     groupInfo: state.groupsReducer.groupInfo,
+    groupsError: state.groupsReducer.groupsError,
     groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
     groupInfoIntersection: state.groupsReducer.groupIntersection,
     groupPeopleOnline: state.groupsReducer.groupPeopleOnline

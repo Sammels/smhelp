@@ -1,7 +1,8 @@
 from datetime import datetime
+import json
 
 from rest_framework import generics
-from django.db.models import Count, DateTimeField
+from django.db.models import Count
 from django.db.models.functions import Trunc, Extract
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -102,7 +103,9 @@ class AddGroup(generics.CreateAPIView, generics.ListAPIView):
         api = vk_api.API(session)
         try:
             group_id = group_link.split('/')[-1:][0]
-            data = api.groups.getById(group_id=group_id)
+            data = api.groups.getById(group_id=group_id, fields=('members_count',))
+            if data[0]['members_count'] > 10000:
+                return HttpResponseBadRequest(json.dumps({'error': 'Group has a lot of memebers'}))
             try:
                 group = WatchingGroups.objects.get(link=group_link)
             except Exception:
