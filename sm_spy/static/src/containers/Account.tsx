@@ -178,7 +178,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
         const data = [
             {'name': 'Пересчение', 'value': this.props.groupInfoIntersection.length},
-            {'name': 'Участинки мой группы', 'value': 100 - this.props.groupInfoIntersection.length}
+            {'name': 'Уникальные участинки моей группы', 'value': 100 - this.props.groupInfoIntersection.length}
         ];
         const group_data = this.props.groupInfoIntersection.map((object, index) => {
             return {'name': object.first_name + ' ' + object.last_name,

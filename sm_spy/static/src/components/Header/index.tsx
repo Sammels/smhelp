@@ -12,7 +12,7 @@ const HeaderClass = class Header extends React.Component<IHeaderProps, any> {
     }
 
     logout() {
-        return false;
+        window.location.href = '/user/logout/';
     }
 
     showUserMenu () {

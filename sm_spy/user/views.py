@@ -3,10 +3,11 @@ import json
 import random
 import string
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, models
+from django.contrib.auth import login, logout
+
 
 
 def vk_auth(request):
@@ -31,3 +32,8 @@ def vk_auth(request):
             user.save()
         login(request, user)
     return render(request, 'base.html')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('/')
