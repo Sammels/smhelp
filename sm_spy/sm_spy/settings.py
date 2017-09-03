@@ -238,6 +238,8 @@ CELERYBEAT_SCHEDULE = {
     'vk_checker': {
         'task': 'vk_app.celery.vk_checker',
         'schedule': crontab(minute=0, hour=23),
+        'queue': 'vk_check',
+        'routing_key': "task.vk_check"
     },
     'proxy_parser': {
         'task': 'twitch.celery.proxy_parser',
@@ -248,6 +250,15 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute='*/15'),
     }
 }
+CELERY_QUEUES = {
+        "default": {
+            "binding_key": "default.#",
+        },
+        "regular_tasks": {
+            "binding_key": "task.#",
+        },
+    }
+CELERY_DEFAULT_QUEUE = "default"
 CELERY_TIMEZONE = 'UTC'
 CELERY_RESULT_BACKEND = BROKER_URL
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'

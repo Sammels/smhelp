@@ -80,6 +80,7 @@ class GroupsForceUpdate(generics.CreateAPIView, GetGroups):
         group.force_update()
         return self.list(request, *args, **kwargs)
 
+
 class GroupsDelete(generics.DestroyAPIView, GetGroups):
     permission_classes = (IsGroupOwner, )
 
@@ -87,7 +88,6 @@ class GroupsDelete(generics.DestroyAPIView, GetGroups):
         group = get_object_or_404(WatchingGroups, pk=kwargs['group_id'], watchers=request.user)
         group.watchers.remove(request.user)
         return self.list(request, *args, **kwargs)
-
 
 
 class AddGroup(generics.CreateAPIView, generics.ListAPIView):
@@ -115,7 +115,7 @@ class AddGroup(generics.CreateAPIView, generics.ListAPIView):
             group.save()
         except vk_api.exceptions.VkAPIError:
             return HttpResponseBadRequest()
-        vk_checker.delay(group.pk)
+        vk_checker.delay(group.pk, queue='regular_tasks')
         return self.list(request, *args, **kwargs)
 
 
