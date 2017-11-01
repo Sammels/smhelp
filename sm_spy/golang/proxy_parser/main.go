@@ -1,14 +1,13 @@
 package main
 
 import (
-	"strconv"
-	"sync"
 	"../libs/postgres"
 	"../libs/proxy_checker"
 	"../libs/proxy_finder"
 	"bytes"
+	"strconv"
+	"sync"
 )
-
 
 var maxGorutines = 80
 
@@ -54,6 +53,3 @@ func get_proxies_from_db(proxies_store []string) []string {
 	}
 	return proxies_store
 }
-
-
-

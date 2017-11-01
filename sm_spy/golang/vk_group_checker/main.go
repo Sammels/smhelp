@@ -1,17 +1,16 @@
 package main
 
 import (
-	"github.com/yanple/vk_api"
 	"../libs/postgres"
-	"strings"
 	"encoding/json"
-	"strconv"
-	"time"
-	"os"
 	"fmt"
+	"github.com/yanple/vk_api"
 	"log"
+	"os"
+	"strconv"
+	"strings"
+	"time"
 )
-
 
 type vkRresponseContent struct {
 	Count int
@@ -23,7 +22,7 @@ type vkResponse struct {
 }
 
 type error interface {
-    Error() string
+	Error() string
 }
 
 func main() {
@@ -39,7 +38,7 @@ func main() {
 func strAnswerToSlice(vkRespose string) []map[string]interface{} {
 	res := vkResponse{}
 	json.Unmarshal([]byte(vkRespose), &res)
-    	users := res.Response.Users
+	users := res.Response.Users
 	return users
 }
 
@@ -57,7 +56,7 @@ func getMembers(row []string) []map[string]interface{} {
 	for len(newUsersKeeper) >= 1000 {
 		usersKeeper = append(usersKeeper, newUsersKeeper...)
 		offset += 1
-		params["offset"] = strconv.Itoa(offset*1000)
+		params["offset"] = strconv.Itoa(offset * 1000)
 		strResp, _ := api.Request("groups.getMembers", params)
 		newUsersKeeper = strAnswerToSlice(strResp)
 	}
@@ -92,7 +91,7 @@ func getGroups(pg_conn *postgres.DB) [][]string {
 	return groups_store
 }
 
-func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres.DB)  {
+func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres.DB) {
 
 	group_id, _ := strconv.Atoi(row[1])
 	current_time := time.Now().Local()
@@ -101,35 +100,34 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 		var insertId int
 		var err error
 		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["domain"])
-		if (len(data) > 0) {
+		if len(data) > 0 {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
 		} else {
-			insertId, err = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
-				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
+			insertId, err = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, "+
+				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, "+
 				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
 				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			if err != nil {
 				data = pg_conn.Find("SELECT id FROM vk_app_country WHERE id = $1", user["country"])
-				if (len(data) == 0) {
-					 pg_conn.Insert("INSERT INTO vk_app_country (id, name)" +
+				if len(data) == 0 {
+					pg_conn.Insert("INSERT INTO vk_app_country (id, name)"+
 						" VALUES ($1, $2)", user["country"], "Unknow")
 				}
 				data = pg_conn.Find("SELECT id FROM vk_app_city WHERE id = $1", user["city"])
-				if (len(data) == 0) {
-					 pg_conn.Insert("INSERT INTO vk_app_city (id, country_id, name)" +
+				if len(data) == 0 {
+					pg_conn.Insert("INSERT INTO vk_app_city (id, country_id, name)"+
 						" VALUES ($1, $2, $3)", user["city"], user["country"], "Unknow")
 				}
-				insertId, _ = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, " +
-				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, " +
-				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
-				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
+				insertId, _ = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, "+
+					"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, "+
+					"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
+					user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			}
 		}
-		pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) " +
-			"VALUES ($1, $2, $3)", group_id, insertId,  current_time)
+		pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) "+
+			"VALUES ($1, $2, $3)", group_id, insertId, current_time)
 	}
 	log.Println("Finish task", group_id)
 	pg_conn.Execute("UPDATE vk_app_watchinggroups SET dt_last_update=NOW() WHERE id = $1", group_id)
 }
-

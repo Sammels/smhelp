@@ -1,19 +1,18 @@
 package postgres
 
 import (
-	"database/sql"
-	_"github.com/lib/pq"
-	"log"
 	"bytes"
+	"database/sql"
+	_ "github.com/lib/pq"
+	"log"
 )
-
 
 type DB struct {
 	conn sql.DB
 }
 
 type error interface {
-    Error() string
+	Error() string
 }
 
 func (db *DB) Insert(sql_query string, args ...interface{}) (int, error) {
@@ -23,7 +22,7 @@ func (db *DB) Insert(sql_query string, args ...interface{}) (int, error) {
 	buffer.WriteString(" RETURNING id")
 	err := db.conn.QueryRow(buffer.String(), args...).Scan(&lastInsertId)
 	if err != nil {
-	  return 0, error(err)
+		return 0, error(err)
 	}
 	return lastInsertId, nil
 }
@@ -31,7 +30,7 @@ func (db *DB) Insert(sql_query string, args ...interface{}) (int, error) {
 func (db *DB) Execute(sql_query string, args ...interface{}) (bool, error) {
 	_, err := db.conn.Exec(sql_query, args...)
 	if err != nil {
-	  return false, error(err)
+		return false, error(err)
 	}
 	return true, nil
 }
@@ -40,16 +39,16 @@ func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface
 
 	rows, err := db.conn.Query(sql_query, args...)
 	if err != nil {
-	  log.Fatal(err)
+		log.Fatal(err)
 	}
 	defer rows.Close()
 	columns, _ := rows.Columns()
-        count := len(columns)
-        values := make([]interface{}, count)
-        valuePtrs := make([]interface{}, count)
+	count := len(columns)
+	values := make([]interface{}, count)
+	valuePtrs := make([]interface{}, count)
 	return_slice := make([]map[string]interface{}, 0)
 	for rows.Next() {
-		return_columns := make(map[string]interface{} )
+		return_columns := make(map[string]interface{})
 		for i, _ := range columns {
 			valuePtrs[i] = &values[i]
 		}
@@ -58,7 +57,7 @@ func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface
 			var v interface{}
 			val := values[i]
 			b, ok := val.([]byte)
-			if (ok) {
+			if ok {
 				v = string(b)
 			} else {
 				v = val
@@ -71,9 +70,9 @@ func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface
 }
 
 func (db *DB) init() {
-	connector, err := sql.Open("postgres","user=docker password=docker dbname=sm_spy sslmode=disable")
+	connector, err := sql.Open("postgres", "user=docker password=docker dbname=sm_spy sslmode=disable")
 	if err != nil {
-	  log.Fatal("Error: The data source arguments are not valid")
+		log.Fatal("Error: The data source arguments are not valid")
 	}
 	db.conn = *connector
 }

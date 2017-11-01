@@ -241,13 +241,9 @@ CELERYBEAT_SCHEDULE = {
         'queue': 'vk_check',
         'routing_key': "task.vk_check"
     },
-    'proxy_parser': {
-        'task': 'twitch.celery.proxy_parser',
-        'schedule': crontab(minute='*/10'),
-    },
     'vk_online_checker': {
         'task': 'vk_app.celery.vk_online_checker',
-        'schedule': crontab(minute='*/15'),
+        'schedule': crontab(minute='*/14'),
     }
 }
 CELERY_QUEUES = {
