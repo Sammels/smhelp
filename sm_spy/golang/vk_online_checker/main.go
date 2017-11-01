@@ -50,7 +50,7 @@ func isOnline(strResp string, pg_conn *postgres.DB, person map[string]interface{
 		return 0, 0
 	}
 	for _, VkResp := range res.Response {
-		if VkResp.Online {
+		if VkResp.Online > 0 {
 			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id, is_watching) " +
 				"VALUES (NOW(), $1, true)"
 			_, err := pg_conn.Insert(slq_insert, person["id"])
