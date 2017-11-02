@@ -30,17 +30,20 @@ func main() {
 	users := []string{}
 	params["fields"] = "online"
 	log.Println("Checking online is started for ", len(persons))
+    var strResp string
 	for _, person := range persons {
 		users = append(users, person["vk_id"].(string))
-		var strResp string
-		if len(users) >= 100 {
+		if len(users) >= 800 {
 			person["vk_id"] = strings.Join(users, ",")
 			strResp, _ = api.Request("users.get", params)
 			isOnline(strResp, &pg_conn, person)
+			users = []string{}
 		}
-		isOnline(strResp, &pg_conn, person)
-		time.Sleep(300 * time.Millisecond)
 	}
+    person["vk_id"] = strings.Join(users, ",")
+    strResp, _ = api.Request("users.get", params)
+    isOnline(strResp, &pg_conn, person)
+    time.Sleep(300 * time.Millisecond)
 }
 
 func isOnline(strResp string, pg_conn *postgres.DB, person map[string]interface{}) (int, int) {
