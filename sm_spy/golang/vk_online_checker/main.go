@@ -46,7 +46,7 @@ func main() {
     time.Sleep(300 * time.Millisecond)
 }
 
-func isOnline(strResp string, pg_conn *postgres.DB) (int, int) {
+func isOnline(strResp string, pg_conn *postgres.DB) {
 	res := VkResponse{}
 	json.Unmarshal([]byte(strResp), &res)
 	if len(res.Response) < 1 {
@@ -56,11 +56,10 @@ func isOnline(strResp string, pg_conn *postgres.DB) (int, int) {
 		if VkResp.Online > 0 {
 			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id, is_watching) " +
 				"VALUES (NOW(), (SELECT id FROM vk_app_persongroup WHERE vk_id = $1)), true)"
-			_, err := pg_conn.Insert(slq_insert, person["id"])
+			_, err := pg_conn.Insert(slq_insert, VkResp.Id)
 			if err != nil {
 				log.Println(err)
 			}
 		}
 	}
-	return res.Response[0].Online, res.Response[0].Id
 }
