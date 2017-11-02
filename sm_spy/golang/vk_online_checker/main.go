@@ -34,13 +34,13 @@ func main() {
 	for _, person := range persons {
 		users = append(users, person["vk_id"].(string))
 		if len(users) >= 800 {
-			person["vk_id"] = strings.Join(users, ",")
+			params["user_ids"] = strings.Join(users, ",")
 			strResp, _ = api.Request("users.get", params)
 			isOnline(strResp, &pg_conn, person)
 			users = []string{}
 		}
 	}
-    person["vk_id"] = strings.Join(users, ",")
+    params["user_ids"] = strings.Join(users, ",")
     strResp, _ = api.Request("users.get", params)
     isOnline(strResp, &pg_conn, person)
     time.Sleep(300 * time.Millisecond)
