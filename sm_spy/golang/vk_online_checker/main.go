@@ -50,7 +50,7 @@ func isOnline(strResp string, pg_conn *postgres.DB) {
 	res := VkResponse{}
 	json.Unmarshal([]byte(strResp), &res)
 	if len(res.Response) < 1 {
-		return 0, 0
+		return
 	}
 	for _, VkResp := range res.Response {
 		if VkResp.Online > 0 {
