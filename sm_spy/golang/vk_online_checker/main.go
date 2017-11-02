@@ -42,7 +42,7 @@ func main() {
 	}
     params["user_ids"] = strings.Join(users, ",")
     strResp, _ = api.Request("users.get", params)
-    isOnline(strResp, &pg_conn, person)
+    isOnline(strResp, &pg_conn, params)
     time.Sleep(300 * time.Millisecond)
 }
 
