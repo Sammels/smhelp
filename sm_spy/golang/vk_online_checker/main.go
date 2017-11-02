@@ -36,17 +36,17 @@ func main() {
 		if len(users) >= 800 {
 			params["user_ids"] = strings.Join(users, ",")
 			strResp, _ = api.Request("users.get", params)
-			isOnline(strResp, &pg_conn, person)
+			isOnline(strResp, &pg_conn)
 			users = []string{}
 		}
 	}
     params["user_ids"] = strings.Join(users, ",")
     strResp, _ = api.Request("users.get", params)
-    isOnline(strResp, &pg_conn, params)
+    isOnline(strResp, &pg_conn)
     time.Sleep(300 * time.Millisecond)
 }
 
-func isOnline(strResp string, pg_conn *postgres.DB, person map[string]interface{}) (int, int) {
+func isOnline(strResp string, pg_conn *postgres.DB) (int, int) {
 	res := VkResponse{}
 	json.Unmarshal([]byte(strResp), &res)
 	if len(res.Response) < 1 {
@@ -55,7 +55,7 @@ func isOnline(strResp string, pg_conn *postgres.DB, person map[string]interface{
 	for _, VkResp := range res.Response {
 		if VkResp.Online > 0 {
 			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id, is_watching) " +
-				"VALUES (NOW(), $1, true)"
+				"VALUES (NOW(), (SELECT id FROM vk_app_persongroup WHERE vk_id = $1)), true)"
 			_, err := pg_conn.Insert(slq_insert, person["id"])
 			if err != nil {
 				log.Println(err)
