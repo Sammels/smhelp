@@ -10,14 +10,14 @@ import (
 )
 
 type VkRresponseContent struct {
-	Id        int    `json: uid`
-	FirstName string `json: first_name`
-	LastName  string `json: last_name`
-	Online    int    `json: online`
+	ID        int    `json:"uid"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Online    int    `json:"online"`
 }
 
 type VkResponse struct {
-	Response []VkRresponseContent
+	Response []VkRresponseContent  `json:"response"`
 }
 
 func main() {
@@ -30,20 +30,28 @@ func main() {
 	users := []string{}
 	params["fields"] = "online"
 	log.Println("Checking online is started for ", len(persons))
-    var strResp string
+	var strResp string
 	for _, person := range persons {
 		users = append(users, person["vk_id"].(string))
-		if len(users) >= 800 {
+		if len(users) >= 200 {
 			params["user_ids"] = strings.Join(users, ",")
-			strResp, _ = api.Request("users.get", params)
+			strResp, err := api.Request("users.get", params)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 			isOnline(strResp, &pg_conn)
 			users = []string{}
 		}
 	}
-    params["user_ids"] = strings.Join(users, ",")
-    strResp, _ = api.Request("users.get", params)
-    isOnline(strResp, &pg_conn)
-    time.Sleep(300 * time.Millisecond)
+	params["user_ids"] = strings.Join(users, ",")
+	strResp, rerr := api.Request("users.get", params)
+	if rerr != nil {
+		log.Println(rerr)
+		return
+	}
+	isOnline(strResp, &pg_conn)
+	time.Sleep(300 * time.Millisecond)
 }
 
 func isOnline(strResp string, pg_conn *postgres.DB) {
@@ -56,7 +64,7 @@ func isOnline(strResp string, pg_conn *postgres.DB) {
 		if VkResp.Online > 0 {
 			slq_insert := "INSERT INTO vk_app_persononline (dt_online, person_id, is_watching) " +
 				"VALUES (NOW(), (SELECT id FROM vk_app_persongroup WHERE vk_id = $1), true)"
-			_, err := pg_conn.Insert(slq_insert, VkResp.Id)
+			_, err := pg_conn.Insert(slq_insert, VkResp.ID)
 			if err != nil {
 				log.Println(err)
 			}

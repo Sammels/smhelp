@@ -99,16 +99,17 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 	for _, user := range users {
 		var insertId int
 		var err error
-		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["domain"])
+		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["id"])
 		if len(data) > 0 {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
 		} else {
 			insertId, err = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, "+
 				"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, "+
-				"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
+				"$5, $6, $7, $8, $9)", user["uid"], user["bdate"], user["first_name"], user["has_mobile"],
 				user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			if err != nil {
+				log.Println(err)
 				data = pg_conn.Find("SELECT id FROM vk_app_country WHERE id = $1", user["country"])
 				if len(data) == 0 {
 					pg_conn.Insert("INSERT INTO vk_app_country (id, name)"+
@@ -121,7 +122,7 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 				}
 				insertId, _ = pg_conn.Insert("INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, "+
 					"has_mobile, last_name, photo_max_orig, sex, city_id, country_id) VALUES ($1, $2, $3, $4, "+
-					"$5, $6, $7, $8, $9)", user["domain"], user["bdate"], user["first_name"], user["has_mobile"],
+					"$5, $6, $7, $8, $9)", user["uid"], user["bdate"], user["first_name"], user["has_mobile"],
 					user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			}
 		}
