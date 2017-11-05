@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 from rest_framework import generics
@@ -134,12 +134,17 @@ class GetPeopleOnline(generics.ListAPIView):
     serializer_class = PeopleOnlineSerializator
 
     def get_queryset(self):
+        last_month = datetime.today() - timedelta(days=30)
         members = PersonsGroups.objects.filter(group_id=self.kwargs['group_id']).values_list('person_id')
         queryset = PersonOnline.objects.values('is_watching').annotate(
             count_person=Count('person_id')).annotate(
-            hour_online=Extract('dt_online', 'hour')).filter(
-            is_watching=True, person__in=members).values('count_person', 'hour_online').order_by('hour_online')
-
+            hour_online=Extract('dt_online', 'hour')).annotate(
+            week_day=Extract('dt_online', 'dow')).filter(
+            dt_online__gte=last_month,
+            is_watching=True, person__in=members, week_day=self.kwargs['week']).values('count_person',
+                                                                                           'hour_online').order_by(
+            'hour_online')
+        print(queryset.query)
         return queryset
 
 

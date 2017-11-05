@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'get_group_geography/(?P<pk>[0-9]+)/$', GetGeographyMembers.as_view(), name="get_group_geography"),
     url(r'get_group_intersection/(?P<first_group>[0-9]+)/$', GetGroupsIntersection.as_view(),
         name="get_group_intersection"),
-    url(r'group/(?P<group_id>[0-9]+)/online/$', GetPeopleOnline.as_view(), name="get_people_onlie"),
+    url(r'group/(?P<group_id>[0-9]+)/online/(?P<week>[0-9]+)/$', GetPeopleOnline.as_view(), name="get_people_onlie"),
 ]
