@@ -37,7 +37,7 @@
                             headers: { 'X-CSRFToken': '{{csrf_token}}' }
                         }
                     ).then(function (response) {
-                        window.location.reload();
+                        window.location.href = "/#/account";
                     }).catch(function (error) {
                         console.log(error);
                     });

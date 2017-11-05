@@ -74,10 +74,10 @@ export const deleteGroup = function (group_id: number) {
     }
 }
 
-export const getOnlinePeople = function (group_id: number): object {
+export const getOnlinePeople = function (group_id: number, day_week: number): object {
     return {
         types: [constants.GET_GROUP_PEOPLE_ONLINE, constants.GET_GROUP_PEOPLE_ONLINE_SUCCESS,
                 constants.GET_GROUP_PEOPLE_ONLINE_FAIL],
-        promise: request.get('/vk/group/' + group_id + '/online/')
+        promise: request.get('/vk/group/' + group_id + '/online/' + day_week + "/")
     }
 }

@@ -29,6 +29,17 @@ body {
         cursor: pointer;
       }
     }
+    .account-day-weeks {
+      display: flex;
+      list-style-type: none;
+      justify-content: space-around;
+      a {
+        text-decoration: none;
+      }
+      a.active {
+        color: #235270  ;
+      }
+    }
 
     .center-pie {
       width: 410px;
