@@ -29,9 +29,26 @@ func main() {
 	pg_conn := postgres.Init()
 	var memberOfGroup []map[string]interface{}
 	for _, row := range getGroups(&pg_conn) {
+	    sql := "SELECT * FROM vk_app_queuegroupupdating WHERE " +
+		    "group_id = $1"
+        groups := pg_conn.Find(sql, row[1])
+        log.Println("Groups were found: ", len(groups))
+        if len(groups) > 0 {
+            log.Println("Continue ID - ", row[1])
+            continue
+        }
+        _, err := pg_conn.Execute("INSERT INTO vk_app_queuegroupupdating (group_id, dt_create) VALUES ($1, $2)",
+            row[1], time.Now())
+        if err != nil {
+            log.Println(err)
+        }
 		memberOfGroup = getMembers(row)
 		log.Println("Count of members second: ", len(memberOfGroup))
 		insertUsers(memberOfGroup, row, &pg_conn)
+        _, err = pg_conn.Execute("DELETE FROM vk_app_queuegroupupdating WHERE group_id = $1", row[1])
+        if err != nil {
+            log.Println(err)
+        }
 	}
 }
 
@@ -99,7 +116,7 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 	for _, user := range users {
 		var insertId int
 		var err error
-		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["id"])
+		data := pg_conn.Find("SELECT id FROM vk_app_persongroup WHERE vk_id = $1", user["uid"])
 		if len(data) > 0 {
 			insertId64 := data[0]["id"].(int64)
 			insertId = int(insertId64)
@@ -126,8 +143,11 @@ func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres
 					user["last_name"], user["photo_max_orig"], user["sex"], user["city"], user["country"])
 			}
 		}
-		pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) "+
+		_, errInsert := pg_conn.Execute("INSERT INTO vk_app_personsgroups (group_id, person_id, dt_checking) "+
 			"VALUES ($1, $2, $3)", group_id, insertId, current_time)
+        if errInsert != nil {
+            log.Println(errInsert);
+        }
 	}
 	log.Println("Finish task", group_id)
 	pg_conn.Execute("UPDATE vk_app_watchinggroups SET dt_last_update=NOW() WHERE id = $1", group_id)
