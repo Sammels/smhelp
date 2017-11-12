@@ -9,7 +9,7 @@ from celery.app import shared_task
 logger = logging.getLogger(__name__)
 
 
-@shared_task(queue="regular_tasks")
+@shared_task()
 def vk_checker(group_id=None):
     logger.info("vk_checker is stated")
     command = ['{}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_group_checker.so'))]

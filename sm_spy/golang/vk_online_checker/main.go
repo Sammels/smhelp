@@ -66,7 +66,7 @@ func isOnline(strResp string, pg_conn *postgres.DB) {
 				"VALUES (NOW(), (SELECT id FROM vk_app_persongroup WHERE vk_id = $1), true)"
 			_, err := pg_conn.Insert(slq_insert, VkResp.ID)
 			if err != nil {
-				log.Println(err)
+				log.Println(err, "----", slq_insert, "----", VkResp.ID)
 			}
 		}
 	}

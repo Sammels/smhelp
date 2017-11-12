@@ -36,7 +36,7 @@ class WatchingGroups(models.Model):
 
 class PersonGroup(models.Model):
     pgroup = models.ManyToManyField(WatchingGroups, through='PersonsGroups')
-    vk_id = models.CharField(max_length=255)
+    vk_id = models.CharField(max_length=255, unique=True)
     city = models.ForeignKey(City, null=True)
     country = models.ForeignKey(Country, null=True)
     first_name = models.CharField(max_length=255, null=True)

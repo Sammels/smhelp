@@ -243,15 +243,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute='*/14')
     }
 }
-CELERY_QUEUES = {
-        "default": {
-            "binding_key": "default.#",
-        },
-        "regular_tasks": {
-            "binding_key": "task.#",
-        },
-    }
-CELERY_DEFAULT_QUEUE = "default"
+
 CELERY_TIMEZONE = 'UTC'
 CELERY_RESULT_BACKEND = BROKER_URL
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
