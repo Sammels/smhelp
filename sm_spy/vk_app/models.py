@@ -92,3 +92,8 @@ class PhotosPostGroup(models.Model):
     photo_807 = models.CharField(max_length=255)
     photo_604 = models.CharField(max_length=255)
 
+
+class QueueGroupUpdating(models.Model):
+    group = models.ForeignKey(WatchingGroups)
+    dt_create = models.DateField(auto_now_add=True)
+
