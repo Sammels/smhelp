@@ -487,7 +487,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         const self = this;
         setTimeout(function() {self.setState({
             showMessage: false
-        })}, 2000);
+        })}, 800);
         return <Modal message={this.currentModalMessage} />
     }
 
