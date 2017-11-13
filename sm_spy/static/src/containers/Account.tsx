@@ -241,19 +241,19 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     activeMembersContent(week_day: number) {
         const head = (<ul className="account-day-weeks">
                         <li><a href="javascript:void(0)" className={week_day == 1 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 0).then( () => { this.activeMembersContent(0) } ))}>Понедельник</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 1).then( () => { this.activeMembersContent(1) } ))}>Понедельник</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 2 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 1).then( () => { this.activeMembersContent(1) } ))}>Вторник</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 2).then( () => { this.activeMembersContent(2) } ))}>Вторник</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 3 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 2).then( () => { this.activeMembersContent(2) } ))}>Среда</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 3).then( () => { this.activeMembersContent(3) } ))}>Среда</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 4 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 3).then( () => { this.activeMembersContent(3) } ))}>Четверг</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 4).then( () => { this.activeMembersContent(4) } ))}>Четверг</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 5 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 4).then( () => { this.activeMembersContent(4) } ))}>Пятница</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 5).then( () => { this.activeMembersContent(5) } ))}>Пятница</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 6 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 5).then( () => { this.activeMembersContent(5) } ))}>Суббота</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 6).then( () => { this.activeMembersContent(6) } ))}>Суббота</a></li>
                         <li><a href="javascript:void(0)" className={week_day == 0 ? 'active' : null}
-                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 6).then( () => { this.activeMembersContent(6) } ))}>Воскресенье</a></li>
+                               onClick={() => (this.props.getOnlinePeople(this.state.currentGroup, 0).then( () => { this.activeMembersContent(0) } ))}>Воскресенье</a></li>
                      </ul>);
         if (!this.props.groupPeopleOnline.length) {
             this.state.html_content = <p>Данные не обнаружены или идет загрузка</p>;
