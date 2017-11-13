@@ -49,6 +49,9 @@ class Wrapper extends React.Component<WrapperRedux, IWrapperClassState>  {
 
     componentDidMount() {
         this.props.onGetUserInfo();
+        const currentTimeZone = (new Date).getTimezoneOffset()/-60;
+        const date = new Date(new Date().getTime() + 60 * 1000);
+        document.cookie = "time_zone=" + currentTimeZone + "; path=/; expires=" + date.toUTCString();
     }
 
     render () {

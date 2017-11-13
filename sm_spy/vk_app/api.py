@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 import json
+import pytz
 
 from rest_framework import generics
 from django.db.models import Count
-from django.db.models.functions import Trunc, Extract
+from django.db.models.functions import Extract
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 import vk as vk_api
 from django.http import HttpResponseBadRequest
@@ -133,7 +135,18 @@ class GetPeopleOnline(generics.ListAPIView):
     permission_classes = (IsGroupOwner, )
     serializer_class = PeopleOnlineSerializator
 
+    def set_time_zone(self):
+        if self.request.COOKIES.get("time_zone") is None:
+            return
+        timezones = pytz.common_timezones
+        for timezoneOne in timezones:
+            zone = pytz.timezone(timezoneOne)
+            if int(datetime.now(zone).utcoffset().total_seconds()/60/60) == int(self.request.COOKIES.get("time_zone")):
+                timezone.activate(pytz.timezone(timezoneOne))
+                break
+
     def get_queryset(self):
+        self.set_time_zone()
         last_month = datetime.today() - timedelta(days=30)
         members = PersonsGroups.objects.filter(group_id=self.kwargs['group_id']).values_list('person_id')
         queryset = PersonOnline.objects.values('is_watching').annotate(
@@ -144,7 +157,6 @@ class GetPeopleOnline(generics.ListAPIView):
             is_watching=True, person__in=members, week_day=self.kwargs['week']).values('count_person',
                                                                                            'hour_online').order_by(
             'hour_online')
-        print(queryset.query)
         return queryset
 
 
