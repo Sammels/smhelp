@@ -64,7 +64,7 @@ func main() {
 	groups := pg_conn.Find(sql_query)
 	for _, groupOne := range groups {
 		log.Print(groupOne)
-		wall, err := getWall("nogti_zhe_gr")
+		wall, err := getWall(groupOne["group_id"].(string))
 		if err != nil {
 			log.Print(err)
 			continue
@@ -97,7 +97,6 @@ func main() {
 			}
 		}
 		log.Print(wall.Response.Count)
-		break
 	}
 }
 
