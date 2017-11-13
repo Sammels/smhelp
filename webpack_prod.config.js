@@ -60,7 +60,7 @@ var config = {
     },
       plugins: [
         new ExtractTextPlugin("../css/styles.css"),
-        new UglifyJSPlugin(),
+        // new UglifyJSPlugin(),
       ]
 };
 

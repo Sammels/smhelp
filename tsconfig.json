@@ -5,7 +5,7 @@
         "target": "es5",
         "jsx": "react",
         "lib": ["es6", "dom"],
-        "allowJs": false,
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": false
     },

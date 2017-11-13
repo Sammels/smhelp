@@ -1,14 +1,14 @@
 package proxy_checker
 
 import (
-	"net/url"
+	"../postgres"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
-	"sync"
+	"net/url"
 	"strings"
-	"../postgres"
+	"sync"
+	"time"
 )
 
 type GorutineCounter struct {
@@ -17,7 +17,7 @@ type GorutineCounter struct {
 
 func ProxyChecker(proxy string, wg *sync.WaitGroup, curretnGorutines *GorutineCounter, maxGorutines int) {
 	defer wg.Done()
-	for (curretnGorutines.counter >= maxGorutines) {
+	for curretnGorutines.counter >= maxGorutines {
 		time.Sleep(1)
 	}
 	curretnGorutines.counter++
@@ -38,7 +38,7 @@ func ProxyChecker(proxy string, wg *sync.WaitGroup, curretnGorutines *GorutineCo
 		log.Println("Error", err, proxy)
 		if len(is_proxy) > 0 {
 			pg_conn.Execute("UPDATE twitch_proxies SET proxy_status = 0 WHERE id = $1",
-			is_proxy[0]["id"])
+				is_proxy[0]["id"])
 		}
 	} else {
 		log.Println(proxy, ' ', resp.StatusCode, http.ProxyURL(proxyUrl))

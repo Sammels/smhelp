@@ -17,9 +17,13 @@ const groupsReducer = (state = initialState, action: any) => {
         case constants.GET_GROUPS_SUCCESS:
             return Object.assign({}, result, {groups: action.result.data});
         case constants.ADD_GROUP_SUCCESS:
-            return Object.assign({}, result, {groups: action.result.data});
+            return Object.assign({}, result, {groups: action.result.data, groupsError: {}});
+        case constants.ADD_GROUP_FAIL:
+            return Object.assign({}, result, {groupsError: action.error.response.data});
         case constants.GET_GROUP_INTERSECTION_SUCCESS:
             return Object.assign({}, result, {groupIntersection: action.result.data});
+        case constants.GET_GROUP_PEOPLE_ONLINE_SUCCESS:
+            return Object.assign({}, result, {groupPeopleOnline: action.result.data});
         default:
             return state
     }

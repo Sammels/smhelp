@@ -25,7 +25,7 @@ class WatchingGroups(models.Model):
     dt_last_update = models.DateField(null=True, default=None)
 
     def force_update(self):
-        if self.dt_last_update is not None and self.dt_last_update.date() == datetime.today().date():
+        if self.dt_last_update is not None and self.dt_last_update == datetime.today().date():
             self.dt_last_update = self.dt_last_update - timedelta(days=1)
             dt_last_update = self.dt_last_update
             self.save()
@@ -36,7 +36,7 @@ class WatchingGroups(models.Model):
 
 class PersonGroup(models.Model):
     pgroup = models.ManyToManyField(WatchingGroups, through='PersonsGroups')
-    vk_id = models.CharField(max_length=255)
+    vk_id = models.CharField(max_length=255, unique=True)
     city = models.ForeignKey(City, null=True)
     country = models.ForeignKey(Country, null=True)
     first_name = models.CharField(max_length=255, null=True)
@@ -45,6 +45,12 @@ class PersonGroup(models.Model):
     photo_max_orig = models.CharField(max_length=255, null=True)
     has_mobile = models.IntegerField(null=True)
     bdate = models.CharField(max_length=255, null=True)
+
+
+class PersonOnline(models.Model):
+    dt_online = models.DateTimeField()
+    person = models.ForeignKey(PersonGroup)
+    is_watching = models.BooleanField(default=True)
 
 
 class PersonsGroups(models.Model):
@@ -85,4 +91,9 @@ class PhotosPostGroup(models.Model):
     photo_1280 = models.CharField(max_length=255)
     photo_807 = models.CharField(max_length=255)
     photo_604 = models.CharField(max_length=255)
+
+
+class QueueGroupUpdating(models.Model):
+    group = models.ForeignKey(WatchingGroups)
+    dt_create = models.DateField(auto_now_add=True)
 

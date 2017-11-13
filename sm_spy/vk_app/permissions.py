@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 
 from vk_app.models import WatchingGroups
 

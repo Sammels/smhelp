@@ -1,19 +1,18 @@
 package proxy_finder
 
 import (
-	"strings"
-	"strconv"
-	"net/http"
-	"log"
-	"io/ioutil"
-	"regexp"
+	"bytes"
 	"encoding/base64"
 	"github.com/PuerkitoBio/goquery"
-	"bytes"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
-
-func GetProxyList(page int) ([]string) {
+func GetProxyList(page int) []string {
 	proxy_store := []string{}
 	url := strings.Replace("https://proxy-list.org/english/index.php?search=ssl-yes&ssl=yes&p={page}",
 		"{page}", strconv.Itoa(page), -1)
@@ -47,7 +46,7 @@ func GetProxyList(page int) ([]string) {
 	return proxy_store
 }
 
-func GetFreeProxyList() ([]string) {
+func GetFreeProxyList() []string {
 	proxy_store := []string{}
 	doc, err := goquery.NewDocument("https://free-proxy-list.net")
 	if err != nil {

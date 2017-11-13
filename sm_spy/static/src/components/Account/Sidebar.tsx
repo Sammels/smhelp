@@ -31,7 +31,7 @@ export default class Sidebar extends React.Component<ISidebarProps, any> {
                     <a onClick={ () => this.getPartData('geography') }>География подписчиков</a>
                 </li>
                 <li className={classNames({'active': (this.props.currentAction == 'active_members')})}>
-                    <a onClick={ () => this.getPartData('active_members') }>Активные участники</a>
+                    <a onClick={ () => this.getPartData('active_members') }>Активность участников</a>
                 </li>
                 <li className={classNames({'active': (this.props.currentAction == 'cross_groups')})}>
                     <a onClick={ () => this.getPartData('cross_groups') }>Пересечение групп</a>

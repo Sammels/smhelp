@@ -70,7 +70,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
@@ -237,13 +236,14 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     'vk_checker': {
         'task': 'vk_app.celery.vk_checker',
-        'schedule': crontab(minute=0, hour=23),
+        'schedule': crontab(minute=0, hour=23)
     },
-    'proxy_parser': {
-        'task': 'twitch.celery.proxy_parser',
-        'schedule': crontab(minute='*/10'),
+    'vk_online_checker': {
+        'task': 'vk_app.celery.vk_online_checker',
+        'schedule': crontab(minute='*/14')
     }
 }
+
 CELERY_TIMEZONE = 'UTC'
 CELERY_RESULT_BACKEND = BROKER_URL
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
