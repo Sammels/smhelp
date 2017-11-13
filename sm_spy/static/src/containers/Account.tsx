@@ -144,7 +144,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         } else if (action == 'cross_groups') {
             this.groupsIntersectionContent()
         } else if (action == 'active_members') {
-            this.props.getOnlinePeople(this.state.currentGroup, 0).then( () => { this.activeMembersContent(0) } )
+            this.props.getOnlinePeople(this.state.currentGroup, 1).then( () => { this.activeMembersContent(1) } )
         } else {
             this.noDataContent()
         }
@@ -265,7 +265,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
 
         const data = this.props.groupPeopleOnline.map((object, index) => {
-            return {"name": this.getTimeZoneHour(object.hour_online) + ' час (а, ов)', "Количество online": object.count_person }
+            return {"name": object.hour_online + ' час (а, ов)', "Количество online": object.count_person }
         });
         this.state.html_content = (
             <BarChart width={570} height={300} data={data}>
