@@ -13,8 +13,8 @@ import (
 )
 
 type vkRresponseContent struct {
-	Count int
-	Users []map[string]interface{}
+	Count int			`json:"count"`
+	Users []map[string]interface{}  `json:"users"`
 }
 
 type vkResponse struct {
@@ -29,32 +29,35 @@ func main() {
 	pg_conn := postgres.Init()
 	var memberOfGroup []map[string]interface{}
 	for _, row := range getGroups(&pg_conn) {
-	    sql := "SELECT * FROM vk_app_queuegroupupdating WHERE " +
+	    	sql := "SELECT * FROM vk_app_queuegroupupdating WHERE " +
 		    "group_id = $1"
-        groups := pg_conn.Find(sql, row[1])
-        log.Println("Groups were found: ", len(groups))
-        if len(groups) > 0 {
-            log.Println("Continue ID - ", row[1])
-            continue
-        }
-        _, err := pg_conn.Execute("INSERT INTO vk_app_queuegroupupdating (group_id, dt_create) VALUES ($1, $2)",
-            row[1], time.Now())
-        if err != nil {
-            log.Println(err)
-        }
+		groups := pg_conn.Find(sql, row[1])
+		log.Println("Groups were found: ", len(groups))
+		if len(groups) > 0 {
+		    log.Println("Continue ID - ", row[1])
+		    continue
+		}
+		_, err := pg_conn.Execute("INSERT INTO vk_app_queuegroupupdating (group_id, dt_create) VALUES ($1, $2)",
+		    row[1], time.Now())
+		if err != nil {
+		    log.Println(err)
+		}
 		memberOfGroup = getMembers(row)
 		log.Println("Count of members second: ", len(memberOfGroup))
 		insertUsers(memberOfGroup, row, &pg_conn)
-        _, err = pg_conn.Execute("DELETE FROM vk_app_queuegroupupdating WHERE group_id = $1", row[1])
-        if err != nil {
-            log.Println(err)
-        }
+		_, err = pg_conn.Execute("DELETE FROM vk_app_queuegroupupdating WHERE group_id = $1", row[1])
+		if err != nil {
+		    log.Println(err)
+		}
 	}
 }
 
 func strAnswerToSlice(vkRespose string) []map[string]interface{} {
 	res := vkResponse{}
-	json.Unmarshal([]byte(vkRespose), &res)
+	err := json.Unmarshal([]byte(vkRespose), &res)
+	if err != nil {
+		log.Println(err)
+	}
 	users := res.Response.Users
 	return users
 }
@@ -66,6 +69,7 @@ func getMembers(row []string) []map[string]interface{} {
 	api.AccessToken = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
 	params := make(map[string]string)
 	params["group_id"] = row[0]
+	params["version"] = "5.69"
 	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
 	strResp, _ := api.Request("groups.getMembers", params)
 	newUsersKeeper := strAnswerToSlice(strResp)
