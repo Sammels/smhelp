@@ -63,12 +63,13 @@ func main() {
 	sql_query := "SELECT id, group_id FROM vk_app_watchinggroups"
 	groups := pg_conn.Find(sql_query)
 	for _, groupOne := range groups {
-		log.Print(groupOne)
+		log.Print("Group: ", groupOne)
 		wall, err := getWall(groupOne["group_id"].(string))
 		if err != nil {
 			log.Print(err)
 			continue
 		}
+		log.Print("Total count: ", wall.Response.Count)
 		for _, post := range  wall.Response.Items {
 			insertID, errExec := pg_conn.Insert("INSERT INTO vk_app_postgroup " +
 				"(vk_id, dt_create, text, group_id, comments, likes, reposts, views) " +
@@ -96,7 +97,6 @@ func main() {
 				}
 			}
 		}
-		log.Print(wall.Response.Count)
 	}
 }
 

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from vk_app.api import (GetOverviewUsers, GetGroups, AddGroup, GetGeographyMembers, GetGroupsIntersection,
-                        GetOverviewChanginsUsers, GroupsForceUpdate, GroupsDelete, GetPeopleOnline)
+                        GetOverviewChanginsUsers, GroupsForceUpdate, GroupsDelete, GetPeopleOnline, GetGroupsPosts)
 
 urlpatterns = [
     url(r'get_overview_users/(?P<group_id>[0-9]+)/$', GetOverviewUsers.as_view(), name="get_info"),
@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'get_group_intersection/(?P<first_group>[0-9]+)/$', GetGroupsIntersection.as_view(),
         name="get_group_intersection"),
     url(r'group/(?P<group_id>[0-9]+)/online/(?P<week>[0-9]+)/$', GetPeopleOnline.as_view(), name="get_people_onlie"),
+    url(r'group/(?P<group_id>[0-9]+)/posts/(?P<sort>[A-z]+)/(?P<order>[A-z]+)/$', GetGroupsPosts.as_view(), name="get_posts"),
 ]

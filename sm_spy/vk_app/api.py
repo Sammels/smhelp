@@ -13,8 +13,8 @@ from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
-                                GetGroupsIntersectionSerializator, PeopleOnlineSerializator)
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline
+                                GetGroupsIntersectionSerializator, PeopleOnlineSerializator, GetGroupsPostsSerializator)
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup
 from vk_app.permissions import IsGroupOwner
 from vk_app.celery import vk_checker
 
@@ -178,4 +178,16 @@ class GetGroupsIntersection(generics.ListAPIView):
         if not intersection:
             return self.queryset
         return PersonGroup.objects.filter(id__in=intersection)
+
+
+class GetGroupsPosts(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = GetGroupsPostsSerializator
+
+    def get_queryset(self):
+        order = self.kwargs["order"]
+        sort = self.kwargs["sort"]
+        if order == "desc":
+            sort = "-{}".format(sort)
+        return PostGroup.objects.filter(group_id=self.kwargs["group_id"]).order_by(sort)
 

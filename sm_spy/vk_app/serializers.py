@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PostGroup, AttachPostGroup
 
 
 class CountSerializer(serializers.ModelSerializer):
@@ -61,3 +61,17 @@ class GetGroupsIntersectionSerializator(serializers.ModelSerializer):
     class Meta:
         model = PersonGroup
         fields = ('first_name', 'last_name', 'vk_id', )
+
+
+class AttachSerializator(serializers.ModelSerializer):
+    class Meta:
+        model = AttachPostGroup
+        fields = ('vk_id', 'dt_create', 'title', 'type', 'comments', 'views', 'description', 'photo_604')
+
+
+class GetGroupsPostsSerializator(serializers.ModelSerializer):
+    attach = AttachSerializator(many=True, read_only=True)
+
+    class Meta:
+        model = PostGroup
+        fields = ('id', 'vk_id', 'dt_create', 'text', 'likes', 'comments', 'views', 'reposts', 'attach', )
