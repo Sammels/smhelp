@@ -59,38 +59,29 @@ class PersonsGroups(models.Model):
     dt_checking = models.DateField()
 
 
-class LikesGroup(models.Model):
-    group = models.ForeignKey(WatchingGroups)
-    person = models.ForeignKey(PersonGroup)
-    dt_create = models.DateField(auto_now_add=True)
-
-
-class CommentsGroup(models.Model):
-    group = models.ForeignKey(WatchingGroups)
-    person = models.ForeignKey(PersonGroup)
-    dt_create = models.DateField(auto_now_add=True)
-    comment = models.TextField()
-
-
-class RepostGroup(models.Model):
-    group = models.ForeignKey(WatchingGroups)
-    person = models.ForeignKey(PersonGroup)
-    dt_create = models.DateField(auto_now_add=True)
-
-
 class PostGroup(models.Model):
-    vk_id = models.IntegerField()
+    vk_id = models.IntegerField(unique=True)
     group = models.ForeignKey(WatchingGroups)
     dt_create = models.DateField(auto_now_add=True)
     text = models.TextField()
+    likes = models.IntegerField()
+    comments = models.IntegerField()
+    views = models.IntegerField()
+    reposts = models.IntegerField()
 
 
-class PhotosPostGroup(models.Model):
+class AttachPostGroup(models.Model):
+    vk_id = models.IntegerField(unique=True)
     post = models.ForeignKey(PostGroup)
     dt_create = models.DateField(auto_now_add=True)
     photo_1280 = models.CharField(max_length=255)
     photo_807 = models.CharField(max_length=255)
     photo_604 = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
+    description = models.TextField()
+    comments = models.IntegerField()
+    views = models.IntegerField()
 
 
 class QueueGroupUpdating(models.Model):
