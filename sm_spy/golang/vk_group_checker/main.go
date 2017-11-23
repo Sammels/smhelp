@@ -71,7 +71,11 @@ func getMembers(row []string) []map[string]interface{} {
 	params["group_id"] = row[0]
 	params["version"] = "5.69"
 	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
-	strResp, _ := api.Request("groups.getMembers", params)
+	strResp, errApi := api.Request("groups.getMembers", params)
+	if errApi != nil {
+		log.Println(errApi)
+		return usersKeeper
+	}
 	newUsersKeeper := strAnswerToSlice(strResp)
 	log.Println(len(newUsersKeeper), "was found, for ", params["group_id"])
 	for len(newUsersKeeper) >= 1000 {
