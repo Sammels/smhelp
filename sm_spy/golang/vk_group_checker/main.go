@@ -78,6 +78,10 @@ func getMembers(row []string) []map[string]interface{} {
 	}
 	newUsersKeeper := strAnswerToSlice(strResp)
 	log.Println(len(newUsersKeeper), "was found, for ", params["group_id"])
+	if len(newUsersKeeper) == 0 {
+		log.Println(strResp)
+		return usersKeeper
+	}
 	for len(newUsersKeeper) >= 1000 {
 		usersKeeper = append(usersKeeper, newUsersKeeper...)
 		offset += 1
