@@ -8,7 +8,7 @@ const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
-         getGroupUsersInfoChanges, getOnlinePeople } from '../actions/groupsActions';
+         getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent } from '../actions/groupsActions';
 import Modal from "../components/Modal";
 
 import './css/account.scss';
@@ -90,6 +90,7 @@ interface DispatchFromProps {
     forceUpdate: (group_id: number) => Promise<any>;
     deleteGroup: (group_id: number) => Promise<any>;
     getOnlinePeople: (group_id: number, day_week: number) => Promise<any>;
+    wallGroupContent: (group_id: number, sort: string, order: string) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -145,6 +146,9 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             this.groupsIntersectionContent()
         } else if (action == 'active_members') {
             this.props.getOnlinePeople(this.state.currentGroup, 1).then( () => { this.activeMembersContent(1) } )
+        } else if (action == 'group_wall') {
+            this.props.wallGroupContent(this.state.currentGroup, "id", "desc").then(
+                () => { this.wallGroupContent() } )
         } else {
             this.noDataContent()
         }
@@ -152,6 +156,30 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     noDataContent() {
+        this.setState({
+            'html_content': <p>Нет данных или идет загрузка</p>
+        });
+    }
+
+    wallGroupContent() {
+         const data = [
+            {'name': 'Пересчение', 'value': this.props.groupInfoIntersection.length},
+            {'name': 'Уникальные участинки моей группы', 'value': 100 - this.props.groupInfoIntersection.length}
+        ];
+        const group_data = this.props.groupInfoIntersection.map((object, index) => {
+            return {'name': object.first_name + ' ' + object.last_name,
+                    //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
+                    'link': object.vk_id
+            }
+        });
+        const COLORS = ['#0088FE', '#00C49F'];
+        const intersection = (
+            <div className="center-pie">
+            <BootstrapTable data={group_data} striped={true} hover={true}>
+              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
+              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+            </BootstrapTable>
+        </div>);
         this.setState({
             'html_content': <p>Нет данных или идет загрузка</p>
         });
@@ -567,6 +595,7 @@ const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     forceUpdate: (group_id: number) => dispatch(forceUpdate(group_id)),
     deleteGroup: (group_id: number) => dispatch(deleteGroup(group_id)),
     getOnlinePeople: (group_id: number, day_week: number) => dispatch(getOnlinePeople(group_id, day_week)),
+    wallGroupContent: (group_id: number, sort: string, order: string) => dispatch(wallGroupContent(group_id, sort, order)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

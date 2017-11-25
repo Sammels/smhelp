@@ -36,6 +36,9 @@ export default class Sidebar extends React.Component<ISidebarProps, any> {
                 <li className={classNames({'active': (this.props.currentAction == 'cross_groups')})}>
                     <a onClick={ () => this.getPartData('cross_groups') }>Пересечение групп</a>
                 </li>
+                <li className={classNames({'active': (this.props.currentAction == 'group_wall')})}>
+                    <a onClick={ () => this.getPartData('group_wall') }>Стена группы</a>
+                </li>
             </ul>
         </div>
     }

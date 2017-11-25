@@ -31,6 +31,14 @@ export const getGroupsGeography = function (group_id: number): object {
     }
 }
 
+export const wallGroupContent = function (group_id: number, sort: string, order: string): object {
+    return {
+        types: [constants.GET_GROUP_WALL, constants.GET_GROUP_WALL_SUCCESS,
+                constants.GET_GROUP_WALL_FAIL],
+        promise: request.get('/vk/group/' + group_id + '/posts/' + sort + "/" + order + "/")
+    }
+}
+
 export const addGroup = function (data: any) {
     var params = new URLSearchParams();
     for (let key in data) {
