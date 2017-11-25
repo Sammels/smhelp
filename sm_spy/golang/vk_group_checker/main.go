@@ -71,6 +71,7 @@ func getMembers(row []string) []map[string]interface{} {
 	params["group_id"] = row[0]
 	params["version"] = "5.69"
 	params["fields"] = "sex,bdate,city,country,photo_max_orig,domain,has_mobile"
+	time.Sleep(1 * time.Second)
 	strResp, errApi := api.Request("groups.getMembers", params)
 	if errApi != nil {
 		log.Println(errApi)
