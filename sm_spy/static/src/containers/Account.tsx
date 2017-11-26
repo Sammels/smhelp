@@ -198,17 +198,15 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
             }
         });
         const content = (
-            <div className="center-pie">
             <BootstrapTable data={group_data} striped={true} hover={true}>
               <TableHeaderColumn dataField="vk_id" isKey={true} dataAlign="center" dataSort={true}>ID</TableHeaderColumn>
               <TableHeaderColumn dataField="date" dataAlign="center" dataSort={false}>Дата</TableHeaderColumn>
               <TableHeaderColumn dataField="text" dataAlign="center" dataSort={true}>Текст</TableHeaderColumn>
-              <TableHeaderColumn dataField="comments" dataAlign="center" dataSort={true}>Комментарии</TableHeaderColumn>
+              <TableHeaderColumn dataField="comments" dataAlign="center" dataSort={true}>Коммент.</TableHeaderColumn>
               <TableHeaderColumn dataField="likes" dataAlign="center" dataSort={true}>Лайки</TableHeaderColumn>
               <TableHeaderColumn dataField="reposts" dataAlign="center" dataSort={true}>Репосты</TableHeaderColumn>
-              <TableHeaderColumn dataField="views" dataAlign="center" dataSort={true}>Просмотры</TableHeaderColumn>
-            </BootstrapTable>
-        </div>);
+              <TableHeaderColumn dataField="views" dataAlign="center" dataSort={true}>Просм.</TableHeaderColumn>
+            </BootstrapTable>);
         this.setState({
             'html_content': content
         });
