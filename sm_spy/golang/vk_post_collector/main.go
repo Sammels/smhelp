@@ -61,6 +61,8 @@ type VKResponse struct {
 func main() {
 	pg_conn := postgres.Init()
 	sql_query := "SELECT id, group_id FROM vk_app_watchinggroups"
+	existSQL := "SELECT EXISTS  ( SELECT *  FROM vk_app_postgroup  WHERE group_id = $1 AND vk_id = $2)"
+
 	groups := pg_conn.Find(sql_query)
 	for _, groupOne := range groups {
 		log.Print("Group: ", groupOne)
@@ -70,7 +72,12 @@ func main() {
 			continue
 		}
 		log.Print("Total count: ", wall.Response.Count)
+
 		for _, post := range  wall.Response.Items {
+			exists := pg_conn.Find(existSQL, groupOne["id"],  post.ID)
+			if exists[0]["exists"].(bool) == true {
+				continue
+			}
 			insertID, errExec := pg_conn.Insert("INSERT INTO vk_app_postgroup " +
 				"(vk_id, dt_create, text, group_id, comments, likes, reposts, views) " +
 					"VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", post.ID, time.Unix(post.Date, 0),

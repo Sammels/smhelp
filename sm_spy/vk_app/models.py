@@ -71,7 +71,7 @@ class PostGroup(models.Model):
 
 
 class AttachPostGroup(models.Model):
-    vk_id = models.IntegerField(unique=True)
+    vk_id = models.IntegerField()
     post = models.ForeignKey(PostGroup, related_name='attach')
     dt_create = models.DateField(auto_now_add=True)
     photo_1280 = models.CharField(max_length=255)
