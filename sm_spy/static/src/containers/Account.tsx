@@ -67,6 +67,29 @@ interface groupPeopleOnlineContainer {
     count_person: number
 }
 
+interface groupWallAttachContainer {
+    vk_id: number,
+    dt_create: number,
+    title: string,
+    views: number,
+    comments: number,
+    type: string,
+    description: string,
+    photo: string,
+}
+
+interface groupWallContainer {
+    id: number,
+    vk_id: number,
+    dt_create: number,
+    text: string,
+    likes: number,
+    views: number,
+    reports: number,
+    comments: number,
+    attach: Array<groupWallAttachContainer>,
+}
+
 interface groupError {
     error: string
 }
@@ -78,6 +101,7 @@ interface StateFromProps {
     groupInfoIntersection: Array<groupIntersectionContainer>,
     groupPeopleOnline: Array<groupPeopleOnlineContainer>,
     groupsError: groupError,
+    groupWall: Array<groupWallContainer>,
 }
 
 interface DispatchFromProps {
@@ -162,26 +186,29 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     }
 
     wallGroupContent() {
-         const data = [
-            {'name': 'Пересчение', 'value': this.props.groupInfoIntersection.length},
-            {'name': 'Уникальные участинки моей группы', 'value': 100 - this.props.groupInfoIntersection.length}
-        ];
-        const group_data = this.props.groupInfoIntersection.map((object, index) => {
-            return {'name': object.first_name + ' ' + object.last_name,
-                    //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
-                    'link': object.vk_id
+        const group_data = this.props.groupWall.map((object, index) => {
+            return {
+                'vk_id': object.vk_id,
+                'text': object.text,
+                'comments': object.comments,
+                'likes': object.likes,
+                'views': object.views,
+                'reports': object.reports,
             }
         });
-        const COLORS = ['#0088FE', '#00C49F'];
-        const intersection = (
+        const content = (
             <div className="center-pie">
             <BootstrapTable data={group_data} striped={true} hover={true}>
-              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
-              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
+              <TableHeaderColumn dataField="vk_id" isKey={true} dataAlign="center" dataSort={true}>ID</TableHeaderColumn>
+              <TableHeaderColumn dataField="text" dataAlign="center" dataSort={true}>Текст</TableHeaderColumn>
+              <TableHeaderColumn dataField="comments" dataAlign="center" dataSort={true}>Комментарии</TableHeaderColumn>
+              <TableHeaderColumn dataField="likes" dataAlign="center" dataSort={true}>Лайки</TableHeaderColumn>
+              <TableHeaderColumn dataField="reports" dataAlign="center" dataSort={true}>Репосты</TableHeaderColumn>
+              <TableHeaderColumn dataField="views" dataAlign="center" dataSort={true}>Просмотры</TableHeaderColumn>
             </BootstrapTable>
         </div>);
         this.setState({
-            'html_content': <p>Нет данных или идет загрузка</p>
+            'html_content': content
         });
     }
 
@@ -581,7 +608,8 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupsError: state.groupsReducer.groupsError,
     groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
     groupInfoIntersection: state.groupsReducer.groupIntersection,
-    groupPeopleOnline: state.groupsReducer.groupPeopleOnline
+    groupPeopleOnline: state.groupsReducer.groupPeopleOnline,
+    groupWall: state.groupsReducer.groupWall
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({

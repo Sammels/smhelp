@@ -16,6 +16,9 @@ def vk_checker(group_id=None):
     if group_id:
         command += [str(group_id)]
     subprocess.Popen(command)
+    # TODO: добавить сбор информации по одной группе
+    command = ['{}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_post_collector.so'))]
+    subprocess.Popen(command)
     logger.info("vk_checker is ended")
 
 
