@@ -85,7 +85,7 @@ interface groupWallContainer {
     text: string,
     likes: number,
     views: number,
-    reports: number,
+    reposts: number,
     comments: number,
     attach: Array<groupWallAttachContainer>,
 }
@@ -189,11 +189,11 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         const group_data = this.props.groupWall.map((object, index) => {
             return {
                 'vk_id': object.vk_id,
-                'text': object.text,
+                'text': (object.text.length > 100) ? object.text.substr(0, 100) + '...' : object.text,
                 'comments': object.comments,
                 'likes': object.likes,
                 'views': object.views,
-                'reports': object.reports,
+                'reposts': object.reposts,
             }
         });
         const content = (
@@ -203,7 +203,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
               <TableHeaderColumn dataField="text" dataAlign="center" dataSort={true}>Текст</TableHeaderColumn>
               <TableHeaderColumn dataField="comments" dataAlign="center" dataSort={true}>Комментарии</TableHeaderColumn>
               <TableHeaderColumn dataField="likes" dataAlign="center" dataSort={true}>Лайки</TableHeaderColumn>
-              <TableHeaderColumn dataField="reports" dataAlign="center" dataSort={true}>Репосты</TableHeaderColumn>
+              <TableHeaderColumn dataField="reposts" dataAlign="center" dataSort={true}>Репосты</TableHeaderColumn>
               <TableHeaderColumn dataField="views" dataAlign="center" dataSort={true}>Просмотры</TableHeaderColumn>
             </BootstrapTable>
         </div>);
@@ -531,7 +531,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
     forceUpdate() {
         this.props.forceUpdate(this.state.currentGroup).then(() => {
-            this.currentModalMessage = 'Обновления запущено. Дождитесь обвноления';
+            this.currentModalMessage = 'Обновления запущено. Дождитесь обновления';
             this.setState({
                 'showMessage': true
             })
