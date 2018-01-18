@@ -76,7 +76,10 @@ func main() {
 		for _, post := range  wall.Response.Items {
 			exists := pg_conn.Find(existSQL, groupOne["id"],  post.ID)
 			if exists[0]["exists"].(bool) == true {
-				continue
+				_, errDel := pg_conn.Execute("DELETE FROM vk_app_postgroup  WHERE group_id = $1 AND vk_id = $2", groupOne["id"],  post.ID)
+				if errDel != nil {
+					log.Print(errDel)
+				}
 			}
 			insertID, errExec := pg_conn.Insert("INSERT INTO vk_app_postgroup " +
 				"(vk_id, dt_create, text, group_id, comments, likes, reposts, views) " +

@@ -111,7 +111,7 @@ class AddGroup(generics.CreateAPIView, generics.ListAPIView):
             try:
                 group = WatchingGroups.objects.get(link=group_link)
             except Exception:
-                group = WatchingGroups(link=group_link, name=data[0]['name'], type=data[0]['type'], group_id=group_id)
+                group = WatchingGroups(link=group_link, name=data[0]['name'], type=data[0]['type'], group_id=data[0]["gid"])
                 group.save()
             group.watchers.add(request.user.pk)
             group.save()
