@@ -70,7 +70,7 @@ func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface
 }
 
 func (db *DB) init() {
-	connector, err := sql.Open("postgres", "user=docker password=docker dbname=sm_spy sslmode=disable port=5433")
+	connector, err := sql.Open("postgres", "user=docker password=docker dbname=sm_spy sslmode=disable")
 	if err != nil {
 		log.Fatal("Error: The data source arguments are not valid")
 	}
