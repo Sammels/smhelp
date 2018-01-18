@@ -6,6 +6,7 @@ import (
 	"log"
 	"encoding/json"
 	"time"
+	"github.com/sirupsen/logrus"
 )
 
 const token = "41e737d3e413561f8a3bc0a113bf6dfaf2591de9cd78e93f79ea8b11cb61de78959333afc0b9ca94d066e"
@@ -76,9 +77,18 @@ func main() {
 		for _, post := range  wall.Response.Items {
 			exists := pg_conn.Find(existSQL, groupOne["id"],  post.ID)
 			if exists[0]["exists"].(bool) == true {
-				_, errDel := pg_conn.Execute("DELETE FROM vk_app_postgroup  WHERE group_id = $1 AND vk_id = $2", groupOne["id"],  post.ID)
-				if errDel != nil {
-					log.Print(errDel)
+				postID := pg_conn.Find("SELECT id  FROM vk_app_postgroup  WHERE group_id = $1 AND vk_id = $2", groupOne["id"],  post.ID)
+				for _, postIDOne := range postID {
+					_, err := pg_conn.Execute("DELETE FROM vk_app_attachpostgroup WHERE post_id = $1", postIDOne["id"])
+					if err != nil {
+						logrus.Error(err)
+						continue
+					}
+					_, err = pg_conn.Execute("DELETE FROM vk_app_postgroup WHERE id = $1", postIDOne["id"])
+					if err != nil {
+						logrus.Error(err)
+						continue
+					}
 				}
 			}
 			insertID, errExec := pg_conn.Insert("INSERT INTO vk_app_postgroup " +
