@@ -1,0 +1,3 @@
+package config
+
+const AccessToken = "9d4e7f1c9d4e7f1c9d4e7f1c229d15a32e99d4e9d4e7f1cc440eed188f29110bc24087e"

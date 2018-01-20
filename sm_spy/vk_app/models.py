@@ -7,15 +7,18 @@ from vk_app.celery import vk_checker
 
 
 class Country(models.Model):
+    """База данных стран из вк"""
     name = models.CharField(max_length=255)
 
 
 class City(models.Model):
+    """База данных городов из вк"""
     name = models.CharField(max_length=255)
     country = models.ForeignKey(Country)
 
 
 class WatchingGroups(models.Model):
+    """Наблюдаемые группы"""
     name = models.CharField(max_length=255)
     link = models.CharField(max_length=255)
     group_id = models.CharField(max_length=255)
@@ -35,6 +38,7 @@ class WatchingGroups(models.Model):
 
 
 class PersonGroup(models.Model):
+    """Профили людей из вк"""
     pgroup = models.ManyToManyField(WatchingGroups, through='PersonsGroups')
     vk_id = models.CharField(max_length=255, unique=True)
     city = models.ForeignKey(City, null=True)
@@ -48,18 +52,21 @@ class PersonGroup(models.Model):
 
 
 class PersonOnline(models.Model):
+    """Таблица людей on-line"""
     dt_online = models.DateTimeField()
     person = models.ForeignKey(PersonGroup)
     is_watching = models.BooleanField(default=True)
 
 
 class PersonsGroups(models.Model):
+    """Таблица людей, которые находятся в группе на момент проверки"""
     group = models.ForeignKey(WatchingGroups)
     person = models.ForeignKey(PersonGroup)
     dt_checking = models.DateField()
 
 
 class PostGroup(models.Model):
+    """Посты в группе"""
     vk_id = models.IntegerField(unique=True)
     group = models.ForeignKey(WatchingGroups)
     dt_create = models.DateField(auto_now_add=True)
@@ -71,6 +78,7 @@ class PostGroup(models.Model):
 
 
 class AttachPostGroup(models.Model):
+    """Медиа-файлы поста"""
     vk_id = models.IntegerField()
     post = models.ForeignKey(PostGroup, related_name='attach')
     dt_create = models.DateField(auto_now_add=True)
@@ -85,6 +93,21 @@ class AttachPostGroup(models.Model):
 
 
 class QueueGroupUpdating(models.Model):
+    """Таблица очередей, чтобы два действия не происходили одновременно"""
     group = models.ForeignKey(WatchingGroups)
     dt_create = models.DateField(auto_now_add=True)
 
+
+class PersonActions(models.Model):
+    """Таблица логгирования действий людей"""
+    LIKE, COMMENT, IN, OUT = 1, 2, 3, 4
+    CHOICES = (
+        (LIKE, "like"),
+        (COMMENT, "COMMENT"),
+        (IN, "IN"),
+        (OUT, "OUT"),
+    )
+    group = models.ForeignKey(WatchingGroups)
+    person = models.ForeignKey(PersonGroup)
+    dt_create = models.DateTimeField(auto_now_add=True)
+    action = models.SmallIntegerField(choices=CHOICES, default=0, db_index=True)

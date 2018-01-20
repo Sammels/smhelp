@@ -13,7 +13,8 @@ from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
-                                GetGroupsIntersectionSerializator, PeopleOnlineSerializator, GetGroupsPostsSerializator)
+                                GetGroupsIntersectionSerializator, PeopleOnlineSerializator, GetGroupsPostsSerializator,
+                                GetOverviewChanginsUsersSerializator)
 from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup
 from vk_app.permissions import IsGroupOwner
 from vk_app.celery import vk_checker
@@ -30,7 +31,7 @@ class GetOverviewUsers(generics.ListAPIView):
 
 class GetOverviewChanginsUsers(generics.ListAPIView):
     permission_classes = (IsGroupOwner,)
-    serializer_class = GetGroupsIntersectionSerializator
+    serializer_class = GetOverviewChanginsUsersSerializator
 
     def get_queryset(self):
         persons_ids_out = []

@@ -57,6 +57,17 @@ class GetGroupsSerializator(serializers.ModelSerializer):
         fields = ('id', 'name', 'dt_last_update', 'link', )
 
 
+class GetOverviewChanginsUsersSerializator(serializers.ModelSerializer):
+    dt_create = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PersonGroup
+        fields = ('first_name', 'last_name', 'vk_id', 'dt_create', )
+
+    def get_dt_create(self, obj):
+        return ''
+
+
 class GetGroupsIntersectionSerializator(serializers.ModelSerializer):
     class Meta:
         model = PersonGroup
