@@ -4,6 +4,7 @@ Commands for building Go library:
     go build -o ./bin/vk_group_checker.so ./golang/vk_group_checker/main.go
     go build -o ./bin/vk_online_checker.so ./golang/vk_online_checker/main.go
     go build -o ./bin/vk_post_collector.so ./golang/vk_post_collector/main.go
+    go build -o ./bin/vk_actions.so ./golang/vk_actions/main.go
 
 For running celery listener:
 

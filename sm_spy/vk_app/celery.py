@@ -30,3 +30,13 @@ def vk_online_checker(group_id=None):
         command += [str(group_id)]
     subprocess.Popen(command)
     logger.info("vk_online_checker is ended")
+
+
+@shared_task()
+def vk_action_checker(group_id=None):
+    logger.info("vk_action_checker is stated")
+    command = ['{}'.format(os.path.join(settings.BASE_DIR, 'bin', 'vk_actions.so'))]
+    if group_id:
+        command += [str(group_id)]
+    subprocess.Popen(command)
+    logger.info("vk_actions is ended")

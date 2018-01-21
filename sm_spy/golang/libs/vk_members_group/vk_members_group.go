@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// PersonItems : json который выдает API-vk
 type PersonItems struct {
 	ID        int    `json:"id"`
 	FirstName string `json:"first_name"`
@@ -33,7 +34,7 @@ type PersonVK struct {
 	} `json:"response"`
 }
 
-
+// GetMembers : получить всех участников группы
 func GetMembers(accessToken string, groupID string) (PersonVK, error) {
 	response := PersonVK{}
 	fields := "sex,bdate,city,country,photo_max_orig,domain,has_mobile"

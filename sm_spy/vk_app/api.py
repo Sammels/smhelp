@@ -14,8 +14,8 @@ from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
                                 GetGroupsIntersectionSerializator, PeopleOnlineSerializator, GetGroupsPostsSerializator,
-                                GetOverviewChanginsUsersSerializator)
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup
+                                GetActionsSerializator)
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup, PersonActions
 from vk_app.permissions import IsGroupOwner
 from vk_app.celery import vk_checker
 
@@ -31,7 +31,7 @@ class GetOverviewUsers(generics.ListAPIView):
 
 class GetOverviewChanginsUsers(generics.ListAPIView):
     permission_classes = (IsGroupOwner,)
-    serializer_class = GetOverviewChanginsUsersSerializator
+    serializer_class = GetGroupsIntersectionSerializator
 
     def get_queryset(self):
         persons_ids_out = []
@@ -191,4 +191,20 @@ class GetGroupsPosts(generics.ListAPIView):
         if order == "desc":
             sort = "-{}".format(sort)
         return PostGroup.objects.filter(group_id=self.kwargs["group_id"]).order_by(sort)
+
+class GetGroupsActions(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = GetActionsSerializator
+
+    def get_queryset(self):
+        date_end = datetime.now()
+        date_start = date_end.replace(hour=0, minute=0, second=0, microsecond=0)
+        date_start_str = self.request.GET.get("date_start", None)
+        date_end_str = self.request.GET.get("date_end", None)
+        if date_start_str is not None:
+            date_start = datetime.strptime(date_start_str, "%Y:%m:%d")
+        if date_end_str is not None:
+            date_end = datetime.strptime(date_end_str, "%Y:%m:%d")
+        return PersonActions.objects.filter(
+            dt_create__gt=date_start, dt_create__lt=date_end, group_id=self.kwargs["group_id"]).select_related('person')
 

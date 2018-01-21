@@ -40,7 +40,7 @@ class WatchingGroups(models.Model):
 class PersonGroup(models.Model):
     """Профили людей из вк"""
     pgroup = models.ManyToManyField(WatchingGroups, through='PersonsGroups')
-    vk_id = models.CharField(max_length=255, unique=True)
+    vk_id = models.CharField(max_length=255, unique=True, db_index=True)
     city = models.ForeignKey(City, null=True)
     country = models.ForeignKey(Country, null=True)
     first_name = models.CharField(max_length=255, null=True)
@@ -67,7 +67,7 @@ class PersonsGroups(models.Model):
 
 class PostGroup(models.Model):
     """Посты в группе"""
-    vk_id = models.IntegerField(unique=True)
+    vk_id = models.IntegerField(unique=True, db_index=True)
     group = models.ForeignKey(WatchingGroups)
     dt_create = models.DateField(auto_now_add=True)
     text = models.TextField()
@@ -79,7 +79,7 @@ class PostGroup(models.Model):
 
 class AttachPostGroup(models.Model):
     """Медиа-файлы поста"""
-    vk_id = models.IntegerField()
+    vk_id = models.IntegerField(db_index=True)
     post = models.ForeignKey(PostGroup, related_name='attach')
     dt_create = models.DateField(auto_now_add=True)
     photo_1280 = models.CharField(max_length=255)
@@ -107,7 +107,7 @@ class PersonActions(models.Model):
         (IN, "IN"),
         (OUT, "OUT"),
     )
-    group = models.ForeignKey(WatchingGroups)
-    person = models.ForeignKey(PersonGroup)
-    dt_create = models.DateTimeField(auto_now_add=True)
+    group = models.ForeignKey(WatchingGroups, related_name='watching_group')
+    person = models.ForeignKey(PersonGroup, related_name='person_group')
+    dt_create = models.DateTimeField(auto_now_add=True, db_index=True)
     action = models.SmallIntegerField(choices=CHOICES, default=0, db_index=True)

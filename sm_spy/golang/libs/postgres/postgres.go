@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 )
 
 type DB struct {
@@ -70,7 +71,11 @@ func (db *DB) Find(sql_query string, args ...interface{}) []map[string]interface
 }
 
 func (db *DB) init() {
-	connector, err := sql.Open("postgres", "user=docker password=docker dbname=sm_spy sslmode=disable")
+	dns := "user=docker password=docker dbname=sm_spy sslmode=disable"
+	if os.Getenv("ENV") == "development" {
+		dns += " port=5433"
+	}
+	connector, err := sql.Open("postgres", dns)
 	if err != nil {
 		log.Fatal("Error: The data source arguments are not valid")
 	}

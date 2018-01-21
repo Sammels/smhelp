@@ -241,6 +241,10 @@ CELERYBEAT_SCHEDULE = {
     'vk_online_checker': {
         'task': 'vk_app.celery.vk_online_checker',
         'schedule': crontab(minute='*/14')
+    },
+    'vk_actions_checker': {
+        'task': 'vk_app.celery.vk_action_checker',
+        'schedule': crontab(minute='*/10')
     }
 }
 

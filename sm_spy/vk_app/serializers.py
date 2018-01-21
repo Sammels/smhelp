@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PostGroup, AttachPostGroup
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PostGroup, AttachPostGroup, PersonActions
 
 
 class CountSerializer(serializers.ModelSerializer):
@@ -57,21 +57,21 @@ class GetGroupsSerializator(serializers.ModelSerializer):
         fields = ('id', 'name', 'dt_last_update', 'link', )
 
 
-class GetOverviewChanginsUsersSerializator(serializers.ModelSerializer):
-    dt_create = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PersonGroup
-        fields = ('first_name', 'last_name', 'vk_id', 'dt_create', )
-
-    def get_dt_create(self, obj):
-        return ''
-
-
 class GetGroupsIntersectionSerializator(serializers.ModelSerializer):
     class Meta:
         model = PersonGroup
-        fields = ('first_name', 'last_name', 'vk_id', )
+        fields = ('first_name', 'last_name', 'vk_id', 'id')
+
+
+class GetActionsSerializator(serializers.ModelSerializer):
+    person = GetGroupsIntersectionSerializator(read_only=True)
+    class Meta:
+        model = PersonActions
+        fields = ('dt_create', 'group', 'person', 'action', )
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.select_related('person')
 
 
 class AttachSerializator(serializers.ModelSerializer):
