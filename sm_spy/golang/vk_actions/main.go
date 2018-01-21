@@ -40,6 +40,7 @@ func getNewPersons(groupVKID string, groupID int) {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println("Count of person:", len(persons.Response.Items))
 	for _, item := range persons.Response.Items {
 		var dataID int
 
