@@ -39,7 +39,6 @@ func getNewPersons(groupVKID string, groupID int) {
 	persons, err := vk_members_group.GetMembers(config.AccessToken, groupVKID)
 	if err != nil {
 		log.Println(err)
-		return
 	}
 	for _, item := range persons.Response.Items {
 		var dataID int
