@@ -202,9 +202,9 @@ class GetGroupsActions(generics.ListAPIView):
         date_start_str = self.request.GET.get("date_start", None)
         date_end_str = self.request.GET.get("date_end", None)
         if date_start_str is not None:
-            date_start = datetime.strptime(date_start_str, "%Y:%m:%d")
+            date_start = datetime.strptime(date_start_str, "%Y-%m-%d")
         if date_end_str is not None:
-            date_end = datetime.strptime(date_end_str, "%Y:%m:%d")
+            date_end = datetime.strptime(date_end_str, "%Y-%m-%d") + timedelta(hours=23, minutes=59)
         return PersonActions.objects.filter(
             dt_create__gt=date_start, dt_create__lt=date_end, group_id=self.kwargs["group_id"]).select_related('person')
 

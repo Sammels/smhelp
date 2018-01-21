@@ -8,7 +8,7 @@ const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
-         getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent } from '../actions/groupsActions';
+         getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent, getActionsPeople } from '../actions/groupsActions';
 import Modal from "../components/Modal";
 
 import './css/account.scss';
@@ -59,7 +59,8 @@ interface groupGeagraphyContainer {
 interface groupIntersectionContainer {
     first_name: string,
     last_name: string,
-    vk_id: string
+    vk_id: string,
+    id: number
 }
 
 interface groupPeopleOnlineContainer {
@@ -94,6 +95,13 @@ interface groupError {
     error: string
 }
 
+interface groupActionsContainer {
+    dt_create: string,
+    group: number,
+    action: number,
+    person: groupIntersectionContainer
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
@@ -102,6 +110,7 @@ interface StateFromProps {
     groupPeopleOnline: Array<groupPeopleOnlineContainer>,
     groupsError: groupError,
     groupWall: Array<groupWallContainer>,
+    groupActions: Array<groupActionsContainer>
 }
 
 interface DispatchFromProps {
@@ -111,6 +120,7 @@ interface DispatchFromProps {
     getGroupsGeography: (group_id: number) => Promise<any>;
     getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) => Promise<any>;
     getGroupUsersInfoChanges: (group_id: number, date: string) => Promise<any>;
+    getActionsPeople: (group_id: number, date: string) => Promise<any>;
     forceUpdate: (group_id: number) => Promise<any>;
     deleteGroup: (group_id: number) => Promise<any>;
     getOnlinePeople: (group_id: number, day_week: number) => Promise<any>;
@@ -436,34 +446,57 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
            <Legend />
            <Line type="monotone" dataKey="count" stroke="#82ca9d" />
         </LineChart>);
-
-        this.props.getGroupUsersInfoChanges(this.state.currentGroup, db_checking).then(() => {
-
-            const group_data_in = this.props.groupInfoIntersection['data_in'].map((object, index) => {
-                return {'name': object.first_name + ' ' + object.last_name,
+        this.props.getActionsPeople(this.state.currentGroup, db_checking).then(() => {
+            this.props.getGroupUsersInfoChanges(this.state.currentGroup, db_checking).then(() => {
+                let mapGroupActions = {};
+                for (let key in this.props.groupActions) {
+                    mapGroupActions[this.props.groupActions[key].person.vk_id] = this.props.groupActions[key].dt_create;
+                }
+                const group_data_in = this.props.groupInfoIntersection['data_in'].map((object, index) => {
+                    let string_time = "-"
+                    if (mapGroupActions[object.vk_id] != undefined) {
+                        let unix_time = Date.parse(mapGroupActions[object.vk_id])
+                        let time_action = new Date(unix_time);
+                        string_time = time_action.getHours() + ":" + time_action.getMinutes()
+                    }
+                    return {
+                        'time': string_time,
+                        'name': object.first_name + ' ' + object.last_name,
                         //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
                         'link': object.vk_id
-                }
-            });
-            const group_data_out = this.props.groupInfoIntersection['data_out'].map((object, index) => {
-                return {'name': object.first_name + ' ' + object.last_name,
+                    }
+                });
+                const group_data_out = this.props.groupInfoIntersection['data_out'].map((object, index) => {
+                    return {
+                        'name': object.first_name + ' ' + object.last_name,
                         //'link': <a href={'https://vk.com/' + object.vk_id} target="_blank">{object.vk_id}</a>
                         'link': object.vk_id
-                }
-            });
+                    }
+                });
 
-            const new_content_in = (<div><h3 className="new_members">Новые участники</h3><BootstrapTable data={group_data_in} striped={true} hover={true}>
-              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
-              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
-            </BootstrapTable></div>);
+                const new_content_in = (
+                    <div><h3 className="new_members">Новые участники</h3><BootstrapTable data={group_data_in}
+                                                                                         striped={true} hover={true}>
+                        <TableHeaderColumn dataField="time" isKey={false} dataAlign="center"
+                                           dataSort={false}>Время</TableHeaderColumn>
+                        <TableHeaderColumn dataField="name" isKey={true} dataAlign="center"
+                                           dataSort={true}>Имя</TableHeaderColumn>
+                        <TableHeaderColumn dataField="link" dataAlign="center"
+                                           dataSort={true}>Ссылка</TableHeaderColumn>
+                    </BootstrapTable></div>);
 
-            const new_content_out = (<div><h3 className="new_members">Ушедшие участники</h3><BootstrapTable data={group_data_out} striped={true} hover={true}>
-              <TableHeaderColumn dataField="name" isKey={true} dataAlign="center" dataSort={true}>Имя</TableHeaderColumn>
-              <TableHeaderColumn dataField="link" dataAlign="center" dataSort={true}>Ссылка</TableHeaderColumn>
-            </BootstrapTable></div>);
+                const new_content_out = (
+                    <div><h3 className="new_members">Ушедшие участники</h3><BootstrapTable data={group_data_out}
+                                                                                           striped={true} hover={true}>
+                        <TableHeaderColumn dataField="name" isKey={true} dataAlign="center"
+                                           dataSort={true}>Имя</TableHeaderColumn>
+                        <TableHeaderColumn dataField="link" dataAlign="center"
+                                           dataSort={true}>Ссылка</TableHeaderColumn>
+                    </BootstrapTable></div>);
 
-            this.setState({
-                'html_content': <div>{this.state.html_content}{new_content_in}{new_content_out}</div>
+                this.setState({
+                    'html_content': <div>{this.state.html_content}{new_content_in}{new_content_out}</div>
+                });
             });
         });
     }
@@ -609,12 +642,14 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupInfoGegraphy: state.groupsReducer.groupInfoGegraphy,
     groupInfoIntersection: state.groupsReducer.groupIntersection,
     groupPeopleOnline: state.groupsReducer.groupPeopleOnline,
-    groupWall: state.groupsReducer.groupWall
+    groupWall: state.groupsReducer.groupWall,
+    groupActions: state.groupsReducer.groupActions,
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     onGetGroupUsersInfo: (group_id: number) => dispatch(getGroupUsersInfo(group_id)),
     getGroupUsersInfoChanges: (group_id: number, date: string) => dispatch(getGroupUsersInfoChanges(group_id, date)),
+    getActionsPeople: (group_id: number, date: string) => dispatch(getActionsPeople(group_id, date)),
     getGroups: () => dispatch(getGroups()),
     addGroup: (data: addGroupData) => dispatch(addGroup(data)),
     getGroupsGeography: (group_id: number) => dispatch(getGroupsGeography(group_id)),

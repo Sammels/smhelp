@@ -89,3 +89,11 @@ export const getOnlinePeople = function (group_id: number, day_week: number): ob
         promise: request.get('/vk/group/' + group_id + '/online/' + day_week + "/")
     }
 }
+
+export const getActionsPeople = function (group_id: number, date: string): object {
+    return {
+        types: [constants.GET_GROUP_ACTIONS, constants.GET_GROUP_ACTIONS_SUCCESS,
+                constants.GET_GROUP_ACTIONS_FAIL],
+        promise: request.get('/vk/group/' + group_id + '/actions/?date_start=' + date + '&date_end=' + date)
+    }
+}

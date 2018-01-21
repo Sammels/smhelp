@@ -26,6 +26,8 @@ const groupsReducer = (state = initialState, action: any) => {
             return Object.assign({}, result, {groupPeopleOnline: action.result.data});
         case constants.GET_GROUP_WALL_SUCCESS:
             return Object.assign({}, result, {groupWall: action.result.data});
+        case constants.GET_GROUP_ACTIONS_SUCCESS:
+            return Object.assign({}, result, {groupActions: action.result.data});
         default:
             return state
     }
