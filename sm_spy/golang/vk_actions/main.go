@@ -27,9 +27,6 @@ func main() {
 	api.AccessToken = config.AccessToken
 	groups := db.Find("SELECT * FROM vk_app_watchinggroups")
 	for _, group := range groups{
-		if group["group_id"] != "lya_pulk" {
-			continue
-		}
 		log.Println("Start collect: ", group["group_id"])
 		getNewPersons(group["group_id"].(string), int(group["id"].(int64)))
 	}
