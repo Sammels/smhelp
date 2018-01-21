@@ -21,7 +21,7 @@ type PersonItems struct {
 		ID    int    `json:"id"`
 		Title string `json:"title"`
 	} `json:"country,omitempty"`
-	PhotoMaxOrig string `json:"photo_max_orig"`
+	PhotoMaxOrig interface{} `json:"photo_max_orig"`
 	HasMobile    int    `json:"has_mobile,omitempty"`
 	Bdate        string `json:"bdate,omitempty"`
 	Deactivated  string `json:"deactivated,omitempty"`
