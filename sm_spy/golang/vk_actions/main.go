@@ -27,6 +27,9 @@ func main() {
 	api.AccessToken = config.AccessToken
 	groups := db.Find("SELECT * FROM vk_app_watchinggroups")
 	for _, group := range groups{
+		if group["group_id"] != "lya_pulk" {
+			continue
+		}
 		log.Println("Start collect: ", group["group_id"])
 		getNewPersons(group["group_id"].(string), int(group["id"].(int64)))
 	}
@@ -72,8 +75,13 @@ func getNewPersons(groupVKID string, groupID int) {
 func fillVKPerson(item vk_members_group.PersonItems) (int, error) {
 	query := `INSERT INTO vk_app_persongroup (vk_id, bdate, first_name, has_mobile, last_name, photo_max_orig,
 		sex, city_id, country_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	return db.Insert(query, item.ID, item.Bdate, item.FirstName, item.HasMobile, item.LastName,
-		item.PhotoMaxOrig, item.Sex, item.City, item.Country)
+	insertID, err := db.Insert(query, item.ID, item.Bdate, item.FirstName, item.HasMobile, item.LastName,
+		item.PhotoMaxOrig, item.Sex, item.City.ID, item.Country.ID)
+	if err != nil {
+		log.Println(query, item)
+	}
+	return insertID, err
+
 }
 
 // заполняем таблыицу vk_app_persongroup
@@ -81,5 +89,8 @@ func fillVKAction(personID int, groupID int, action int) error {
 	log.Println("Insert ", action, "to ", groupID, "Person: ", personID)
 	query := `INSERT INTO vk_app_personactions (person_id, action, group_id, dt_create) VALUES ($1, $2, $3, $4)`
 	_, err := db.Execute(query, personID, action, groupID, time.Now())
+	if err != nil {
+		log.Println(query, personID, action, groupID)
+	}
 	return err
 }
