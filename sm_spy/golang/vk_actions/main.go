@@ -55,8 +55,8 @@ func getNewPersons(groupVKID string, groupID int) {
 		}
 		exists := db.Find(`SELECT EXISTS (SELECT 1 FROM vk_app_personactions WHERE group_id = $1 AND
 						person_id = $2 AND action = $3
-						AND date_trunc('day', dt_create) = date_trunc('day', NOW()))`,
-			dataID, groupID, inAction)
+						AND date_trunc('day', dt_create) = date_trunc('day', $4))`,
+			dataID, groupID, inAction, time.Now())
 		if exists[0]["exists"].(bool) == true {
 			continue
 		}
