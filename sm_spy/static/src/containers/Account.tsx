@@ -455,7 +455,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                 const group_data_in = this.props.groupInfoIntersection['data_in'].map((object, index) => {
                     let string_time = "-"
                     if (mapGroupActions[object.vk_id] != undefined) {
-                        let unix_time = Date.parse(mapGroupActions[object.vk_id])
+                        let unix_time = Date.parse(mapGroupActions[object.vk_id]) - ((new Date).getTimezoneOffset() * 60000)
                         let time_action = new Date(unix_time);
                         string_time = time_action.getHours() + ":" + time_action.getMinutes()
                     }
