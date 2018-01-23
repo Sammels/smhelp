@@ -37,7 +37,7 @@ const MainClass = class Main extends React.Component<IMainProps, IMainState> {
                         <img src="/static/img/slider.jpg" className="slider-image"/>
                         <div className="slider-hint">
                             <div className="hint-title">Ваш новый уровень</div>
-                            <div className="hint-text">Анлизируй свои возможности</div>
+                            <div className="hint-text">Анализируй свои возможности</div>
                         </div>
                     </div>
                     <div className="services">
