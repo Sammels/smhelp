@@ -29,11 +29,10 @@ class WatchingGroups(models.Model):
 
     def force_update(self):
         if self.dt_last_update is not None and self.dt_last_update == datetime.today().date():
-            self.dt_last_update = self.dt_last_update - timedelta(days=1)
-            dt_last_update = self.dt_last_update
-            self.save()
-            persons = PersonsGroups.objects.filter(group=self, dt_checking__gte=dt_last_update)
+            persons = PersonsGroups.objects.filter(group=self, dt_checking__gte=self.dt_last_update)
             persons.delete()
+            self.dt_last_update = None
+            self.save()
         vk_checker.delay(self.pk)
 
 
