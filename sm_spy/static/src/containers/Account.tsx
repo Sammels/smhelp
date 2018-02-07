@@ -10,124 +10,14 @@ import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
          getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent, getActionsPeople } from '../actions/groupsActions';
 import Modal from "../components/Modal";
+import Wall from "../components/Account/Wall"
+
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
 
-
-interface addGroupData {
-    name: string
-}
-
-interface selectValue {
-    value: number,
-    name: string
-}
-
-interface groupContainer{
-    name: string,
-    link: string,
-    id: number
-}
-
-interface groupInfoContainer{
-    dt_checking: string,
-    count: number
-}
-
-interface IAccountProps {
-    match: any;
-    location: any;
-    history: any;
-}
-
-interface IAccountClassState {
-    isShowAddForm: boolean,
-    currentGroup: number,
-    crossGroup: number,
-    html_content: object,
-    inersectionValue: Array<selectValue>,
-    showMessage: boolean
-}
-
-interface groupGeagraphyContainer {
-    city_id: number,
-    count: number,
-    city_name: string
-}
-
-interface groupIntersectionContainer {
-    first_name: string,
-    last_name: string,
-    vk_id: string,
-    id: number
-}
-
-interface groupPeopleOnlineContainer {
-    hour_online: number,
-    count_person: number
-}
-
-interface groupWallAttachContainer {
-    vk_id: number,
-    dt_create: number,
-    title: string,
-    views: number,
-    comments: number,
-    type: string,
-    description: string,
-    photo: string,
-}
-
-interface groupWallContainer {
-    id: number,
-    vk_id: number,
-    dt_create: number,
-    text: string,
-    likes: number,
-    views: number,
-    reposts: number,
-    comments: number,
-    attach: Array<groupWallAttachContainer>,
-}
-
-interface groupError {
-    error: string
-}
-
-interface groupActionsContainer {
-    dt_create: string,
-    group: number,
-    action: number,
-    person: groupIntersectionContainer
-}
-
-interface StateFromProps {
-    groupsList: Array<groupContainer>,
-    groupInfo: Array<groupInfoContainer>,
-    groupInfoGegraphy: Array<groupGeagraphyContainer>,
-    groupInfoIntersection: Array<groupIntersectionContainer>,
-    groupPeopleOnline: Array<groupPeopleOnlineContainer>,
-    groupsError: groupError,
-    groupWall: Array<groupWallContainer>,
-    groupActions: Array<groupActionsContainer>
-}
-
-interface DispatchFromProps {
-    onGetGroupUsersInfo: (group_id: number) => Promise<any>;
-    getGroups: () => Promise<any>;
-    addGroup: (data: addGroupData) => Promise<any>;
-    getGroupsGeography: (group_id: number) => Promise<any>;
-    getGroupsIntersection: (first_group_id: number, second_group_id: Array<selectValue>) => Promise<any>;
-    getGroupUsersInfoChanges: (group_id: number, date: string) => Promise<any>;
-    getActionsPeople: (group_id: number, date: string) => Promise<any>;
-    forceUpdate: (group_id: number) => Promise<any>;
-    deleteGroup: (group_id: number) => Promise<any>;
-    getOnlinePeople: (group_id: number, day_week: number) => Promise<any>;
-    wallGroupContent: (group_id: number, sort: string, order: string) => Promise<any>;
-}
-
-type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
+import '../typing'
+import Retargeting from "../components/Account/Retargeting";
 
 
 class Account extends React.Component<AccountRedux, IAccountClassState> {
@@ -183,6 +73,8 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         } else if (action == 'group_wall') {
             this.props.wallGroupContent(this.state.currentGroup, "id", "desc").then(
                 () => { this.wallGroupContent() } )
+        } else if (action == 'retargeting') {
+            this.onRetargeting()
         } else {
             this.noDataContent()
         }
@@ -192,6 +84,14 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
     noDataContent() {
         this.setState({
             'html_content': <p>Нет данных или идет загрузка</p>
+        });
+    }
+
+    onRetargeting() {
+        const content = <Retargeting/>
+
+        this.setState({
+            'html_content': content
         });
     }
 
@@ -207,18 +107,9 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                 'date': object.dt_create,
             }
         });
-        const content = (
-            <BootstrapTable data={group_data} striped={true} hover={true}>
-              <TableHeaderColumn dataField="vk_id" isKey={true} dataAlign="center" dataSort={true}>ID</TableHeaderColumn>
-              <TableHeaderColumn dataField="date" dataAlign="center" dataSort={false}>Дата</TableHeaderColumn>
-              <TableHeaderColumn dataField="text" dataAlign="center" dataSort={true}>Текст</TableHeaderColumn>
-              <TableHeaderColumn dataField="comments" dataAlign="center" dataSort={true}>Коммент.</TableHeaderColumn>
-              <TableHeaderColumn dataField="likes" dataAlign="center" dataSort={true}>Лайки</TableHeaderColumn>
-              <TableHeaderColumn dataField="reposts" dataAlign="center" dataSort={true}>Репосты</TableHeaderColumn>
-              <TableHeaderColumn dataField="views" dataAlign="center" dataSort={true}>Просм.</TableHeaderColumn>
-            </BootstrapTable>);
+        const data = (<Wall groupWall={group_data}/>)
         this.setState({
-            'html_content': content
+            'html_content': data
         });
     }
 

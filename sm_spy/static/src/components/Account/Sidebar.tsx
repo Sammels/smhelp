@@ -2,11 +2,8 @@ import * as React from "react";
 var classNames = require('classnames');
 
 import './css/sidebar.scss';
+import '../../typing'
 
-interface ISidebarProps {
-    getGroupUsersInfo: (action: string) => void,
-    currentAction: string
-}
 
 export default class Sidebar extends React.Component<ISidebarProps, any> {
 
@@ -38,6 +35,9 @@ export default class Sidebar extends React.Component<ISidebarProps, any> {
                 </li>
                 <li className={classNames({'active': (this.props.currentAction == 'group_wall')})}>
                     <a onClick={ () => this.getPartData('group_wall') }>Стена группы</a>
+                </li>
+                <li className={classNames({'active': (this.props.currentAction == 'retargeting')})}>
+                    <a onClick={ () => this.getPartData('retargeting') }>Ретаргетинг</a>
                 </li>
             </ul>
         </div>
