@@ -97,3 +97,14 @@ export const getActionsPeople = function (group_id: number, date: string): objec
         promise: request.get('/vk/group/' + group_id + '/actions/?date_start=' + date + '&date_end=' + date)
     }
 }
+
+export const searchGroups = function (query: string): object {
+    let filter = {
+        "query": query
+    }
+    return {
+        types: [constants.SEARCH_GROUP_ACTIONS, constants.SEARCH_GROUP_ACTIONS_SUCCESS,
+                constants.SEARCH_GROUP_ACTIONS_FAIL],
+        promise: request.post('/vk/group/search/', filter)
+    }
+}

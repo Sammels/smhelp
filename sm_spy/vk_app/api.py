@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
+import time
 import json
 import pytz
+import csv
 
 from rest_framework import generics
 from django.db.models import Count
@@ -8,16 +10,16 @@ from django.db.models.functions import Extract
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
-import vk as vk_api
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponseNotFound, HttpResponse
 from rest_framework.response import Response
 
 from vk_app.serializers import (GetOverviewUsersSerializer, GetGroupsSerializator, GetGroupsGeographySerializator,
                                 GetGroupsIntersectionSerializator, PeopleOnlineSerializator, GetGroupsPostsSerializator,
                                 GetActionsSerializator)
-from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup, PersonActions
+from vk_app.models import PersonsGroups, WatchingGroups, PersonGroup, PersonOnline, PostGroup, PersonActions, Store
 from vk_app.permissions import IsGroupOwner
-from vk_app.celery import vk_checker
+from vk_app.celery import vk_checker, vk_people_collect
+import vk as vk_api
 
 
 class GetOverviewUsers(generics.ListAPIView):
@@ -118,7 +120,7 @@ class AddGroup(generics.CreateAPIView, generics.ListAPIView):
             group.save()
         except vk_api.exceptions.VkAPIError:
             return HttpResponseBadRequest()
-        vk_checker.delay(group.pk, queue='regular_tasks')
+        vk_checker.delay(group.pk)
         return self.list(request, *args, **kwargs)
 
 
@@ -208,3 +210,34 @@ class GetGroupsActions(generics.ListAPIView):
         return PersonActions.objects.filter(
             dt_create__gt=date_start, dt_create__lt=date_end, group_id=self.kwargs["group_id"]).select_related('person')
 
+
+class SearchGroupsActions(generics.ListAPIView, generics.CreateAPIView):
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        if data.get("query", None) is None:
+            return HttpResponseBadRequest("Bad query")
+        label = str(time.time())
+        vk_people_collect.delay(data.get("query"), label)
+        return Response({"label": label})
+
+
+class GetContentActions(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        try:
+            data = Store.objects.get(key=self.kwargs["label"])
+        except Store.DoesNotExist:
+            return HttpResponseNotFound()
+        if data.is_file == True:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+            writer = csv.writer(response)
+            for d in json.loads(data.value):
+                writer.writerow([d])
+
+            return response
+        return Response({"data": data.value})

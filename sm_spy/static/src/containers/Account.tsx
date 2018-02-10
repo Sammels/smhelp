@@ -8,10 +8,11 @@ const Select = require('react-select');
 
 import Sidebar from '../components/Account/Sidebar';
 import { getGroupUsersInfo, getGroups, addGroup, getGroupsGeography, getGroupsIntersection, forceUpdate, deleteGroup,
-         getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent, getActionsPeople } from '../actions/groupsActions';
+         getGroupUsersInfoChanges, getOnlinePeople, wallGroupContent, getActionsPeople, searchGroups }
+         from '../actions/groupsActions';
 import Modal from "../components/Modal";
 import Wall from "../components/Account/Wall"
-
+import request from '../utils/request';
 
 import './css/account.scss';
 import 'react-select/dist/react-select.css';
@@ -87,8 +88,21 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
         });
     }
 
+    onSearchGroup(query: string) {
+        this.props.searchGroups(query).then(() => {
+            let interval = setInterval(() => {
+                request.get("/vk/get_content/" + this.props.searchGroupsData.label + "/").then((e) => {
+                    alert("Скачать: http://smhelp.net/vk/get_content/" + this.props.searchGroupsData.label + "/")
+                   clearInterval(interval);
+                }).catch((e) => {});
+            }, 5000);
+        })
+    }
+
     onRetargeting() {
-        const content = <Retargeting/>
+
+        const content = <Retargeting searchGroup={(query) => this.onSearchGroup(query)}
+        />
 
         this.setState({
             'html_content': content
@@ -535,6 +549,7 @@ const mapStateToProps = (state: any, ownProp? :any):StateFromProps => ({
     groupPeopleOnline: state.groupsReducer.groupPeopleOnline,
     groupWall: state.groupsReducer.groupWall,
     groupActions: state.groupsReducer.groupActions,
+    searchGroupsData: state.groupsReducer.searchGroups,
 });
 
 const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
@@ -550,6 +565,7 @@ const mapDispatchToProps = (dispatch: any):DispatchFromProps => ({
     deleteGroup: (group_id: number) => dispatch(deleteGroup(group_id)),
     getOnlinePeople: (group_id: number, day_week: number) => dispatch(getOnlinePeople(group_id, day_week)),
     wallGroupContent: (group_id: number, sort: string, order: string) => dispatch(wallGroupContent(group_id, sort, order)),
+    searchGroups: (query: string) => dispatch(searchGroups(query))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

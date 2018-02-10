@@ -28,6 +28,8 @@ const groupsReducer = (state = initialState, action: any) => {
             return Object.assign({}, result, {groupWall: action.result.data});
         case constants.GET_GROUP_ACTIONS_SUCCESS:
             return Object.assign({}, result, {groupActions: action.result.data});
+        case constants.SEARCH_GROUP_ACTIONS_SUCCESS:
+            return Object.assign({}, result, {searchGroups: action.result.data});
         default:
             return state
     }

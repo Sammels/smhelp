@@ -110,3 +110,9 @@ class PersonActions(models.Model):
     person = models.ForeignKey(PersonGroup, related_name='person_group')
     dt_create = models.DateTimeField(auto_now_add=True, db_index=True)
     action = models.SmallIntegerField(choices=CHOICES, default=0, db_index=True)
+
+
+class Store(models.Model):
+    key = models.CharField(max_length=200)
+    value = models.TextField()
+    is_file = models.BooleanField()

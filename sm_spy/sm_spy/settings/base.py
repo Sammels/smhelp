@@ -257,3 +257,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+
+VK_API_APP_KEY = "9d4e7f1c9d4e7f1c9d4e7f1c229d15a32e99d4e9d4e7f1cc440eed188f29110bc24087e"
+VK_API_USER_KEY = "6c2c2ad2f3d1872e5b209640cffa14f4d4721c24427b86266b262ac1738d1d7b22e996c9fa35a644ba69e"

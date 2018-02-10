@@ -84,6 +84,10 @@ interface groupActionsContainer {
     person: groupIntersectionContainer
 }
 
+interface searchGroupsContainer {
+    label: string
+}
+
 interface StateFromProps {
     groupsList: Array<groupContainer>,
     groupInfo: Array<groupInfoContainer>,
@@ -92,7 +96,8 @@ interface StateFromProps {
     groupPeopleOnline: Array<groupPeopleOnlineContainer>,
     groupsError: groupError,
     groupWall: Array<groupWallContainer>,
-    groupActions: Array<groupActionsContainer>
+    groupActions: Array<groupActionsContainer>,
+    searchGroupsData: searchGroupsContainer,
 }
 
 interface DispatchFromProps {
@@ -107,6 +112,7 @@ interface DispatchFromProps {
     deleteGroup: (group_id: number) => Promise<any>;
     getOnlinePeople: (group_id: number, day_week: number) => Promise<any>;
     wallGroupContent: (group_id: number, sort: string, order: string) => Promise<any>;
+    searchGroups: (query: string) => Promise<any>;
 }
 
 type AccountRedux = DispatchFromProps & IAccountProps & StateFromProps;
@@ -125,7 +131,7 @@ interface IWallState {
 }
 
 interface IRetargetingProps {
-
+    searchGroup: (query: string) => void
 }
 
 interface IRetargetingState {

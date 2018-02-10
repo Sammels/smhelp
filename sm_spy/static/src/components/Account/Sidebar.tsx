@@ -37,7 +37,7 @@ export default class Sidebar extends React.Component<ISidebarProps, any> {
                     <a onClick={ () => this.getPartData('group_wall') }>Стена группы</a>
                 </li>
                 <li className={classNames({'active': (this.props.currentAction == 'retargeting')})}>
-                    <a onClick={ () => this.getPartData('retargeting') }>Ретаргетинг</a>
+                    <a onClick={ () => this.getPartData('retargeting') }>Таргетинг</a>
                 </li>
             </ul>
         </div>

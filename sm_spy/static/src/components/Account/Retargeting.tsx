@@ -2,7 +2,7 @@ import * as React from "react";
 
 import '../../typing'
 import {ChangeEvent} from "react";
-
+import { searchGroups } from '../../actions/groupsActions';
 
 export default class Retargeting extends React.Component<IRetargetingProps, IRetargetingState> {
 
@@ -22,7 +22,7 @@ export default class Retargeting extends React.Component<IRetargetingProps, IRet
     }
 
     onStartSearch() {
-        console.log("start");
+        this.props.searchGroup(this.state.searchValue)
     }
 
     render () {
@@ -38,3 +38,4 @@ export default class Retargeting extends React.Component<IRetargetingProps, IRet
     }
 
 }
+
