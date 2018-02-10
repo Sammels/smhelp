@@ -22,7 +22,8 @@ export default class Retargeting extends React.Component<IRetargetingProps, IRet
     }
 
     onStartSearch() {
-        this.props.searchGroup(this.state.searchValue)
+        alert("Запрос отправлен. Ждем результата...");
+        this.props.searchGroup(this.state.searchValue);
     }
 
     render () {
