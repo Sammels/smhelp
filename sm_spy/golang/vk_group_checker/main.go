@@ -37,7 +37,7 @@ func main() {
 		    continue
 		}
 		_, err := pg_conn.Execute("INSERT INTO vk_app_queuegroupupdating (group_id, dt_create) VALUES ($1, $2)",
-		    row[1], time.Now())
+		    row[1], time.Now().UTC())
 		if err != nil {
 		    log.Println(err)
 		}
@@ -121,7 +121,7 @@ func getGroups(pg_conn *postgres.DB) [][]string {
 func insertUsers(users []map[string]interface{}, row []string, pg_conn *postgres.DB) {
 
 	group_id, _ := strconv.Atoi(row[1])
-	current_time := time.Now().Local()
+	current_time := time.Now().UTC()
 	log.Println("Starting insert", group_id, "Count", len(users))
 	for _, user := range users {
 		var insertId int

@@ -84,7 +84,7 @@ func fillVKPerson(item vk_members_group.PersonItems) (int, error) {
 func fillVKAction(personID int, groupID int, action int) error {
 	log.Println("Insert ", action, "to ", groupID, "Person: ", personID)
 	query := `INSERT INTO vk_app_personactions (person_id, action, group_id, dt_create) VALUES ($1, $2, $3, $4)`
-	_, err := db.Execute(query, personID, action, groupID, time.Now())
+	_, err := db.Execute(query, personID, action, groupID, time.Now().UTC())
 	if err != nil {
 		log.Println(query, personID, action, groupID)
 	}
