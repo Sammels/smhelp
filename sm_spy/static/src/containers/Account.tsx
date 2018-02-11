@@ -235,7 +235,7 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
 
 
         const data = this.props.groupPeopleOnline.map((object, index) => {
-            return {"name": object.hour_online + ' час (а, ов)', "Количество online": object.count_person }
+            return {"name": this.getTimeZoneHour(object.hour_online) + ' час (а, ов)', "Количество online": object.count_person }
         });
         this.state.html_content = (
             <BarChart width={570} height={300} data={data}>
