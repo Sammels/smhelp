@@ -7,6 +7,6 @@ DATABASES = {
         'USER': 'docker',
         'PASSWORD': 'docker',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
