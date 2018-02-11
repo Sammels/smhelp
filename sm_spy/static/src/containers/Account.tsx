@@ -362,8 +362,11 @@ class Account extends React.Component<AccountRedux, IAccountClassState> {
                     if (mapGroupActions[object.vk_id] != undefined) {
                         let unix_time = Date.parse(mapGroupActions[object.vk_id]) - ((new Date).getTimezoneOffset() * 60000)
                         let time_action = new Date(unix_time);
-                        string_time = time_action.getHours() + ":" + time_action.getMinutes()
-                        console.log(time_action, string_time)
+                        let min = time_action.getMinutes().toString()
+                        if (min.length == 1) {
+                            min = "0" + min
+                        }
+                        string_time = time_action.getHours() + ":" + min
                     }
                     return {
                         'time': string_time,
