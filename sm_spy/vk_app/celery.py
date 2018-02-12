@@ -69,6 +69,8 @@ def vk_people_collect(query: str, label: str):
         for key, group_item in enumerate(groups):
             members = []
             last_query = r.get(r_key)
+            if last_query is None:
+                last_query = 0
             last_query_dif = time.time() - float(last_query)
             if last_query_dif < time_out:
                 time.sleep(time_out - last_query_dif)
@@ -88,6 +90,6 @@ def vk_people_collect(query: str, label: str):
         content = json.dumps(list(set(glob_members)))
     except Exception as e:
         print(e)
-        content = str(e)
+        content = json.dumps({"error": str(e)})
     store = Store(key=label, value=content, is_file=True)
     store.save()
