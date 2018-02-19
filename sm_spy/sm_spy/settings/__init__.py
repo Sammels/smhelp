@@ -264,3 +264,5 @@ VK_API_USER_KEY = ""
 
 if os.environ.get('ENV') == "development":
     from sm_spy.settings.development import *
+if os.environ.get('ENV') == "production":
+    from sm_spy.settings.production import *
