@@ -262,6 +262,8 @@ REST_FRAMEWORK = {
 VK_API_APP_KEY = SOCIAL_AUTH_VK_OAUTH2_SECRET
 VK_API_USER_KEY = ""
 
+print("ENV: ", os.environ.get('ENV'))
+
 if os.environ.get('ENV') == "development":
     from sm_spy.settings.development import *
 if os.environ.get('ENV') == "production":
