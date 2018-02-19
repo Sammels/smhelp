@@ -36,6 +36,7 @@ func main() {
 		if len(users) >= 200 {
 			params["user_ids"] = strings.Join(users, ",")
 			strResp, err := api.Request("users.get", params)
+			time.Sleep(1 * time.Second)
 			if err != nil {
 				log.Println(err)
 				continue
@@ -51,7 +52,7 @@ func main() {
 		return
 	}
 	isOnline(strResp, &pg_conn)
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(1 * time.Second)
 }
 
 func isOnline(strResp string, pg_conn *postgres.DB) {
