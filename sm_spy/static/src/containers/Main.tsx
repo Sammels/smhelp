@@ -67,7 +67,9 @@ const MainClass = class Main extends React.Component<IMainProps, IMainState> {
                     </div>
                     <div className="services">
                         <h2>Примеры интерфеса</h2>
-                        <Gallery photos={PHOTO_SET} />
+                         <Slider images = {PHOTO_SET} isInfinite delay={5000}>
+                         {PHOTO_SET.map((image, key) => <div key={key}><img src={PHOTO_SET}/></div) }
+                         </Slider>
                     </div>
                 </div>);
       }
